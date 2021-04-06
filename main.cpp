@@ -22,6 +22,12 @@ struct Mem{
     Byte & operator[](u32 Address){
         return Data[Address];
     }
+
+    void WriteWord(Word Value, u32 Address, u32 & Cycles){
+        Data[Address] = Value & 0xFF;
+        Data[Address + 1] = (Value >> 8);
+        Cycles -= 2;
+    }
 };
 
 struct CPU{
@@ -60,10 +66,22 @@ struct CPU{
         return Data;
     }
 
+    Byte FetchWord(u32 & Cycles, Mem & memory){
+        Byte Data = memory[PC];
+        PC++;
+        Data |= (memory[PC] << 8);        //Include a #IF to handle the endianness cases of the running platform
+        PC++;
+        Cycles -= 2;
+
+        return Data;
+
+    }
+
     static constexpr Byte
     INS_LDA_IM = 0xA9,
     INS_LDA_ZP = 0xA5,
-    INS_LDA_ZPX = 0xB5;
+    INS_LDA_ZPX = 0xB5,
+    INS_JSR = 0x20;
 
     void LDASetStatus(){
         Z = (A == 0);
@@ -95,6 +113,15 @@ struct CPU{
                     A = ReadByte(Cycles, ZeroPageAddr, memory);
                     LDASetStatus();
                 } break;
+                case INS_JSR:
+                {
+                    Word SubAddr = FetchWord(Cycles, memory);
+                    memory.WriteWord(PC - 1, SP, Cycles);
+                    Cycles--;
+                    PC = SubAddr;
+                    Cycles--;
+                    SP++;
+                } break;
                 default:
                 {
                     std::cout << "Instruction not handled" << std::endl;
@@ -112,10 +139,12 @@ int main() {
     Mem mem;
     CPU cpu;
     cpu.Reset(mem);
-    mem[0xFFFC] = CPU::INS_LDA_ZP;
+    mem[0xFFFC] = CPU::INS_JSR;
     mem[0xFFFD] = 0x42;
-    mem[0x0042] = 0x84;
-    cpu.Execute(3, mem);
+    mem[0xFFFE] = 0x42;
+    mem[0x4242] = CPU::INS_LDA_IM;
+    mem[0x4243] = 0x84;
+    cpu.Execute(7, mem);
     std::string test;
     std::cin >> test;
     return 0;
