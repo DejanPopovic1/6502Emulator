@@ -18,6 +18,10 @@ struct Mem{
     Byte operator[](u32 Address) const{
         return Data[Address];
     }
+
+    Byte & operator[](u32 Address){
+        return Data[Address];
+    }
 };
 
 struct CPU{
@@ -50,7 +54,8 @@ struct CPU{
         return Data;
     }
 
-    static constexpr Byte INS_LDA_IM = 0xA9;
+    static constexpr Byte
+    INS_LDA_IM = 0xA9;
 
     void Execute(u32 Cycles, Mem & memory){
         while(Cycles){
@@ -62,6 +67,11 @@ struct CPU{
                     A = Value;
                     Z = (A == 0);
                     N = (A & 0b10000000) > 0;
+                    break;
+                }
+                default:
+                {
+                    std::cout << "Instruction not handles" << std::endl;
                     break;
                 }
 
@@ -77,6 +87,8 @@ int main() {
     Mem mem;
     CPU cpu;
     cpu.Reset(mem);
+    mem[0xFFFC] = CPU::INS_LDA_IM;
+    mem[0xFFFD] = 0x42;
     cpu.Execute(2, mem);
     std::string test;
     std::cin >> test;
