@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+
+
 using Byte = unsigned char;
 using Word = unsigned short;
 using u32 = unsigned int;
@@ -135,7 +137,20 @@ struct CPU{
     }
 };
 
+//// Demonstrate some basic assertions.
+//TEST(HelloTest, BasicAssertions) {
+//// Expect two strings not to be equal.
+//EXPECT_STRNE("hello", "world");
+//// Expect equality.
+//EXPECT_EQ(7 * 6, 42);
+//}
+//
+void test(){
+
+}
+
 int main() {
+    //test();
     Mem mem;
     CPU cpu;
     cpu.Reset(mem);
@@ -146,6 +161,8 @@ int main() {
     mem[0x4243] = 0x84;
     cpu.Execute(7, mem);
     std::string test;
+    //::testing::InitGoogleTest();
+    //return RUN_ALL_TESTS();
     std::cin >> test;
     return 0;
 }
