@@ -6,6 +6,7 @@
 using Byte = unsigned char;
 using Word = unsigned short;
 using u32 = unsigned int;
+using s32 = signed int;
 
 struct Mem{
     static constexpr u32 MAX_MEM = 1024 * 64;
@@ -80,17 +81,18 @@ public:
     }
 
     static constexpr Byte
-    INS_LDA_IM = 0xA9,
-    INS_LDA_ZP = 0xA5,
-    INS_LDA_ZPX = 0xB5,
-    INS_JSR = 0x20;
+            INS_LDA_IM = 0xA9,
+            INS_LDA_ZP = 0xA5,
+            INS_LDA_ZPX = 0xB5,
+            INS_JSR = 0x20;
 
     void LDASetStatus(){
         Z = (A == 0);
         N = (A & 0b10000000) > 0;
     }
 
-    void Execute(u32 Cycles, Mem & memory){
+    s32 Execute(u32 Cycles, Mem & memory){
+        const u32 CyclesRequested = Cycles;
         while(Cycles > 0){
             Byte Ins = FetchByte(Cycles, memory);
             switch(Ins){
@@ -138,40 +140,7 @@ public:
 
             }
         }
+        const s32 NumCyclesUsed = CyclesRequested - Cycles;
+        return NumCyclesUsed;
     }
 };
-
-//// Demonstrate some basic assertions.
-//TEST(HelloTest, BasicAssertions) {
-//// Expect two strings not to be equal.
-//EXPECT_STRNE("hello", "world");
-//// Expect equality.
-//EXPECT_EQ(7 * 6, 42);
-//}
-//
-void test(){
-
-}
-
-int main() {
-    //test();
-    Mem mem;
-    CPU cpu;
-    cpu.Reset(mem);
-    std::cout << "Value of A register is: " <<  (int)cpu.A << std::endl;
-    //
-    mem[0xFFFC] = CPU::INS_JSR;
-    mem[0xFFFD] = 0x42;
-    std::cout << "Value of memory is: " <<  std::hex << (int)mem[0xFFFC] << std::endl;
-    mem[0xFFFE] = 0x42;
-    mem[0x4242] = CPU::INS_LDA_IM;
-    mem[0x4243] = 0x84;
-    cpu.Execute(8, mem);
-    //
-    std::string test;
-    std::cout << "Complete, result is: " <<  (int)cpu.A << std::endl;
-    //::testing::InitGoogleTest();
-    //return RUN_ALL_TESTS();
-    std::cin >> test;
-    return 0;
-}
