@@ -54,7 +54,8 @@ public:
 
 private:
     Memory *mem = nullptr;
-
+    uint8_t read(uint16_t a);
+    void write(uint16_t a, uint8_t d);
 
 
 
