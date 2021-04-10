@@ -15,9 +15,8 @@ using s32 = int32_t;
 
 class Memory;
 
-
-
 class Processor{
+    enum flagsRegister{C = 1, Z, I, D, B, U, V, N};
 public:
     Processor();
     ~Processor();
@@ -56,8 +55,15 @@ private:
     Memory *mem = nullptr;
     uint8_t read(uint16_t a);
     void write(uint16_t a, uint8_t d);
+    //The upper significant 8 bits are hardcoded to 1. i.e. SP value is always 0000001xxxxxxxx
+    //The range of the SP is from
+    Byte A, X, Y;
+    Byte SP, PC;
+    Byte flagsRegister;
 
-
+    Byte getFlag();
+    void setFlag();
+    void clearFlag();
 
 };
 

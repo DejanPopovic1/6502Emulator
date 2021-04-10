@@ -23,3 +23,4 @@ uint8_t Processor::read(uint16_t a){
 void Processor::write(uint16_t a, uint8_t d){
     this->mem->write(a, d);
 }
+

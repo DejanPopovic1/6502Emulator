@@ -83,7 +83,7 @@
 //    Word PC;
 //    Word SP;
 //    //The upper significant 8 bits are hardcoded to 1. i.e. SP value is always 0000001xxxxxxxx
-//    //The range of the SP is from
+//    //The range of the SP is from 0x00 = 0xFF
 //    uint8_t A, X, Y;
 //    uint8_t C : 1;
 //    uint8_t Z : 1;
