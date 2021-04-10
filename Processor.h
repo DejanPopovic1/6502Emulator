@@ -6,6 +6,8 @@
 #define PROCESSOR_H
 
 #include <cstdint>
+#include <vector>
+#include <string>
 
 using Byte = uint8_t;
 using Word = uint16_t;
@@ -43,8 +45,8 @@ public:
     uint8_t STX();                                 uint8_t PLA();                      uint8_t CPY();   uint8_t DEX();                                              uint8_t BNE();   uint8_t SEC();
     uint8_t STY();                                 uint8_t PLP();                                       uint8_t DEY();                                              uint8_t BPL();   uint8_t SED();
                                                                                                                                                                     uint8_t BVC();   uint8_t SEI();
-
-    uint8_t XXX();                                                                                                                                                              uint8_t BVS();
+                                                                                                                                                                    uint8_t BVS();
+    uint8_t XXX();
     void clock();
     void reset();
     void irq();
@@ -70,6 +72,15 @@ private:
     void setFlag();
     void clearFlag();
 
+    //For this whole class, instead of class definition initialisation rather intialise as part of the constructor
+    struct Instruction{
+        std::string name;
+        uint8_t(Processor::*operate)() = nullptr;
+        uint8_t(Processor::*addrmode)() = nullptr;
+        uint8_t cycles = 0;
+    };
+
+    std::vector<Instruction> lookup;
 };
 
 
