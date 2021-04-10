@@ -2,10 +2,10 @@
 // Created by DejanP on 2021/04/09.
 //
 
-#ifndef INC_6502EMULATOR_CPU_H
-#define INC_6502EMULATOR_CPU_H
+#ifndef PROCESSOR_H
+#define PROCESSOR_H
 
-class CPU{
+class Processor{
 
 
 
@@ -14,4 +14,4 @@ class CPU{
 };
 
 
-#endif //INC_6502EMULATOR_CPU_H
+#endif //PROCESSOR_H

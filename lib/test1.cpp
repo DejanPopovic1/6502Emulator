@@ -8,7 +8,7 @@
 class M6502Test1 : public testing::Test
 {
 public:
-    Mem mem;
+    Memory mem;
     CPU cpu;
     virtual void SetUp(){
         cpu.Reset(mem);
