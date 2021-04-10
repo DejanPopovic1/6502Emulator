@@ -46,6 +46,23 @@ void Processor::write(uint16_t a, uint8_t d){
     this->mem->write(a, d);
 }
 
+void Processor::clock(){
+    if(cycles == 0){
+        opcode = read(this->PC);
+        this->PC++;
+
+        cycles = lookup[opcode].cycles;
+
+        uint8_t additional_cycle1 = (this->*lookup[opcode].addrmode)();
+        uint8_t additional_cycle2 = (this->*lookup[opcode].operate)();
+        cycles += (additional_cycle1 & additional_cycle2);
+
+    }
+
+    cycles--;
+}
+
+
 uint8_t Processor::IMP(){
     return 0;
 }
