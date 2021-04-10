@@ -69,6 +69,9 @@ uint8_t Processor::IMP(){
 }
 
 uint8_t Processor::ZP0(){
+    addr_abs = read(PC);
+    PC++;
+    addr_abs &= 0x00FF;
     return 0;
 }
 

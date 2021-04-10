@@ -54,7 +54,7 @@ public:
     uint8_t fetch();
     uint8_t fetched = 0x00;
     Word addr_abs = 0x0000;
-    Word addr_rel = 0x00;
+    Word addr_rel = 0x00;//Check if this can be defined as a Byte instead
     Byte opcode = 0;
     Byte cycles = 0;
 
