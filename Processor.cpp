@@ -64,6 +64,7 @@ void Processor::clock(){
 
 
 uint8_t Processor::IMP(){
+    this->fetched = this->A;
     return 0;
 }
 
@@ -88,6 +89,7 @@ uint8_t Processor::IZX(){
 }
 
 uint8_t Processor::IMM(){
+    addr_abs = PC++;
     return 0;
 }
 
