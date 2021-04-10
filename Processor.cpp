@@ -96,7 +96,11 @@ uint8_t Processor::IMM(){
     return 0;
 }
 
+//Must implement a wrap around here!
 uint8_t Processor::ZPX(){
+    addr_abs = read(PC) + this->X;
+    PC++;
+    addr_abs &= 0x00FF;
     return 0;
 }
 
