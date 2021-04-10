@@ -3,6 +3,6 @@ project(6502Emulator)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(6502Emulator main.cpp main.h CPU.h Memory.h Memory.cpp)
+add_executable(6502Emulator main.cpp main.h Processor.h Memory.h Memory.cpp Processor.cpp)
 
 add_subdirectory(lib)
