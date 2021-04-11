@@ -84,6 +84,11 @@ uint8_t Processor::ZPY(){
 }
 
 uint8_t Processor::ABS(){
+    uint16_t lowByte = read(PC);
+    PC++;
+    uint16_t highByte = read(PC);
+    PC++;
+    this->addr_abs = (highByte << 8) | lowByte;
     return 0;
 }
 
