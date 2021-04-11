@@ -96,10 +96,27 @@ uint8_t Processor::ABS(){
 }
 
 uint8_t Processor::ABY(){
-    return 0;
+    uint16_t lowByte = read(this->PC);
+    this->PC++;
+    uint16_t highByte = read(this->PC);
+    this->PC++;
+    this->addr_abs = (highByte << 8) | lowByte;
+    this->addr_abs += this->Y;
+    if((addr_abs & 0xFF00) != (highByte << 8)){
+        return 1;//"May" need an additional clock cycle
+    }
+    else {
+        return 0;
+    }
 }
 
+//"Both memory locations specifying the effective address must be in zero page"
 uint8_t Processor::IZX(){
+    uint16_t t = read(this->PC);
+    this->PC++;
+    uint16_t low = read((uint16_t)(t + (uint16_t)X) & 0x00FF);
+    uint16_t high = read((uint16_t)(t + (uint16_t)X + 1) & 0x00FF);
+    this->addr_abs = (high << 8) | low;
     return 0;
 }
 
@@ -152,6 +169,18 @@ uint8_t Processor::IND(){
 }
 
 uint8_t Processor::IZY(){
+    uint16_t t = read(this->PC);
+    this->PC++;
+    uint16_t low = read(t & 0x00FF);
+    uint16_t high = read((t + 1) & 0x00FF);
+    this->addr_abs = (high << 8) | low;
+    addr_abs += Y;
+    if(addr_abs & 0xFF00 != (high << 8)){
+        return 1;
+    }
+    else{
+        return 0;
+    };
     return 0;
 }
 

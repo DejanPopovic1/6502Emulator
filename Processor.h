@@ -24,6 +24,7 @@ public:
     ~Processor();
     void connectMemory(Memory *mem);
     //Addressing Modes
+    //Rename these in more logical fashion according to the Rockwell data sheet
     uint8_t IMP();
     uint8_t ZP0();
     uint8_t ZPY();
