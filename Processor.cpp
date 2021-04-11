@@ -75,7 +75,11 @@ uint8_t Processor::ZP0(){
     return 0;
 }
 
+//Implement wrap around
 uint8_t Processor::ZPY(){
+    addr_abs = read(PC) + this->Y;
+    PC++;
+    addr_abs &= 0x00FF;
     return 0;
 }
 
