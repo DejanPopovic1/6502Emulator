@@ -133,7 +133,17 @@ uint8_t Processor::ZPX(){
     return 0;
 }
 
+//Check *WHY* this negative addition is needed
+//The If statement essentially does the following. If the read number is negative then append 1's infront of it:
+//If xxxxxxxx is negative, i.e. if 1xxxxxxx, then:
+//11111111*1*xxxxxxx
+//Else, 00000000*0*xxxxxxx
 uint8_t Processor::REL(){
+    addr_rel = read(PC);
+    PC++;
+    if(addr_rel & 0x80){
+        addr_rel |= 0xFF00;
+    }
     return 0;
 }
 
