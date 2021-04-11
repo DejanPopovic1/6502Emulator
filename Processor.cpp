@@ -128,7 +128,7 @@ uint8_t Processor::ABX(){
     this->addr_abs = (highByte << 8) | lowByte;
     this->addr_abs += this->X;
     if((addr_abs & 0xFF00) != (highByte << 8)){
-        return 1;
+        return 1;//"May" need an additional clock cycle
     }
     else {
         return 0;
@@ -136,6 +136,18 @@ uint8_t Processor::ABX(){
 }
 
 uint8_t Processor::IND(){
+    uint16_t ptrLow = read(this->PC);
+    this->PC++;
+    uint16_t ptrHigh = read(this->PC);
+    this->PC++;
+    uint16_t ptr = (ptrHigh << 8) | ptrLow;
+    if(ptrLow == 0x00FF){
+        this->addr_abs = (read(ptr & 0xFF00) << 8) | read(ptr + 0);
+    }
+    else {
+        this->addr_abs = (read(ptr + 1) << 8) | read(ptr + 0);
+    }
+
     return 0;
 }
 

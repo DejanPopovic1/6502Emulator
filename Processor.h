@@ -37,6 +37,7 @@ public:
     uint8_t IND();
     uint8_t IZY();
     //OpCodes
+    //Rather store these in a seperate file so that when function pointers point to them, we dont use class function pointers
     //Load/Store Operations | Register Transfers | Stack Operations | Logical        | Arithmetic     | Increments & Decrements | Shifts         | Jumps & Calls  | Branches       | Status Flag Changes | System Functions
     uint8_t LDA();            uint8_t TAX();       uint8_t TSX();     uint8_t AND();   uint8_t ADC();   uint8_t INC();            uint8_t ASL();   uint8_t JMP();   uint8_t BCC();   uint8_t CLC();        uint8_t BRK();
     uint8_t LDX();            uint8_t TAY();       uint8_t TXS();     uint8_t EOR();   uint8_t SBC();   uint8_t INX();            uint8_t LSR();   uint8_t JSR();   uint8_t BCS();   uint8_t CLD();        uint8_t NOP();
