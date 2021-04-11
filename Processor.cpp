@@ -46,6 +46,9 @@ void Processor::write(uint16_t a, uint8_t d){
     this->mem->write(a, d);
 }
 
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//Understand this in more detail
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 void Processor::clock(){
     if(cycles == 0){
         opcode = read(this->PC);
@@ -118,7 +121,18 @@ uint8_t Processor::REL(){
 }
 
 uint8_t Processor::ABX(){
-    return 0;
+    uint16_t lowByte = read(this->PC);
+    this->PC++;
+    uint16_t highByte = read(this->PC);
+    this->PC++;
+    this->addr_abs = (highByte << 8) | lowByte;
+    this->addr_abs += this->X;
+    if((addr_abs & 0xFF00) != (highByte << 8)){
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
 
 uint8_t Processor::IND(){

@@ -1,0 +1,1 @@
+#if to compile a bugless or bug version of the 6502
