@@ -406,7 +406,7 @@ uint8_t Processor::CLC()
 
 uint8_t Processor::CLD()
 {
-
+    setOrClearFlag(D, false);
     return 0;
 }
 
