@@ -250,7 +250,20 @@ uint8_t Processor::ADC()
 
 uint8_t Processor::SBC()
 {
+    fetch();
 
+    // Operating in 16-bit domain to capture carry out
+
+    // We can invert the bottom 8 bits with bitwise xor
+    uint16_t value = ((uint16_t)fetched) ^ 0x00FF;
+
+    // Notice this is exactly the same as addition from here!
+    uint16_t temp = (uint16_t)A + value + (uint16_t)GetFlag(C);
+    setOrClearFlag(C, temp & 0xFF00);
+    setOrClearFlag(Z, ((temp & 0x00FF) == 0));
+    setOrClearFlag(V, (temp ^ (uint16_t)A) & (temp ^ value) & 0x0080);
+    setOrClearFlag(N, temp & 0x0080);
+    A = temp & 0x00FF;
     return 1;
 }
 
