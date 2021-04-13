@@ -76,6 +76,10 @@ uint8_t Processor::fetch(){
 
 }
 
+void Processor::setFlag(enum flagsRegister f){
+    status |= f;
+}
+
 //The addressing modes all return the absolute address and secondary they tell us if there are any additional instructions required. They do nothing else
 
 uint8_t Processor::IMP(){
@@ -222,8 +226,10 @@ uint8_t Processor::SBC()
 
 uint8_t Processor::AND()
 {
-
-    return 1;
+//    fetch();
+//    A = A & fetched;
+//    setFlag(Z, A == 0x00);
+//    return 1;
 }
 
 

@@ -60,6 +60,8 @@ public:
     Byte opcode = 0;
     Byte cycles = 0;
 
+    uint8_t status = 0x00
+
 private:
     Memory *mem = nullptr;
     uint8_t read(uint16_t a);
@@ -71,7 +73,7 @@ private:
     Byte flagsRegister;
 
     Byte getFlag();
-    void setFlag();
+    void setFlag(enum flagsRegister);
     void clearFlag();
 
     //For this whole class, instead of class definition initialisation rather intialise as part of the constructor
