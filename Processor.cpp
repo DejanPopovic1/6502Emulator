@@ -236,7 +236,13 @@ uint8_t Processor::IZY(){
 
 uint8_t Processor::ADC()
 {
-
+    fetch();
+    uint16_t temp = (uint16_t)A + (uint16_t)fetched + (uint16_t)getFlag(C);
+    setOrClearFlag(C, temp > 255);
+    setOrClearFlag(Z, (temp & 0x00FF) == 0);
+    setOrClearFlag(N, temp & 0x80);
+    setOrClearFlag(V, (~((uint16_t)A ^ (uint16_t)fetched) & ((uint16_t)A ^ (uint16_t)temp)) & 0x0080);
+    A = temp & 0x00FF;
     return 1;
 }
 
