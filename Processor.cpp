@@ -413,6 +413,7 @@ uint8_t Processor::CLD()
 
 uint8_t Processor::CLI()
 {
+    setFlag(I, false);
     return 0;
 }
 
