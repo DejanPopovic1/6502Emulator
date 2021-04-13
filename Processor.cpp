@@ -286,7 +286,16 @@ uint8_t Processor::BCS()
 
 uint8_t Processor::BEQ()
 {
+    if (GetFlag(Z) == 1)
+    {
+        cycles++;
+        addr_abs = PC + addr_rel;
 
+        if ((addr_abs & 0xFF00) != (PC & 0xFF00))
+            cycles++;
+
+        PC = addr_abs;
+    }
     return 0;
 }
 
