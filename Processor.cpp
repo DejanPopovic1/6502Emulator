@@ -35,7 +35,9 @@ Processor::~Processor(){
 }
 
 //Add clear and set enums
-//Go through in detail and check then copy to non maskeable interrupt
+//I surmise that after every clock cycle, we conduct an IRQ() routine to check if the interrupt flag is enabled!
+//The endianess of the stack pointer is the same as in general memory
+//Special dedicated purpose address used. Encode into MACRO
 void Processor::irq(){
     if(!getFlag(I)){
         write(0x0100 + SP, (PC >> 8) & 0x00FF);
@@ -52,6 +54,26 @@ void Processor::irq(){
         uint16_t high = read(addr_abs + 1);
         PC = (high << 8) | low;
         cycles = 7;
+    }
+}
+
+//Special dedicated purpose address used. Encode into MACRO
+void Processor::nmi(){
+    if(!getFlag(I)) {
+        write(0x0100 + SP, (PC >> 8) & 0x00FF);
+        SP--;
+        write(0x0100 + SP, PC & 0x00FF);
+        SP--;
+        setOrClearFlag(B, 0);
+        setOrClearFlag(U, 1);
+        setOrClearFlag(I, 1);
+        write(0x0100 + SP, status);
+        SP--;
+        addr_abs = 0xFFFA;
+        uint16_t low = read(addr_abs + 0);
+        uint16_t high = read(addr_abs + 1);
+        PC = (high << 8) | low;
+        cycles = 8;
     }
 }
 
