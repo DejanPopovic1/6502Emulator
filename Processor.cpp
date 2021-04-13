@@ -258,7 +258,7 @@ uint8_t Processor::SBC()
     uint16_t value = ((uint16_t)fetched) ^ 0x00FF;
 
     // Notice this is exactly the same as addition from here!
-    uint16_t temp = (uint16_t)A + value + (uint16_t)GetFlag(C);
+    uint16_t temp = (uint16_t)A + value + (uint16_t)getFlag(C);
     setOrClearFlag(C, temp & 0xFF00);
     setOrClearFlag(Z, ((temp & 0x00FF) == 0));
     setOrClearFlag(V, (temp ^ (uint16_t)A) & (temp ^ value) & 0x0080);
@@ -565,10 +565,13 @@ uint8_t Processor::ORA()
     return 1;
 }
 
-
+//6502 has a base location in memory for the stack pointer which is located in page 0x0100
+//Add a MACRO for this so that it explains it
+//The stack pointer grows downwards and therefore everytime we push onto it, we decrement
 uint8_t Processor::PHA()
 {
-
+    write(0x0100 + SP, A);
+    SP--;
     return 0;
 }
 
