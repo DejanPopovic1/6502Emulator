@@ -674,9 +674,15 @@ uint8_t Processor::ROR()
     return 0;
 }
 
+//Return from interrupt
 uint8_t Processor::RTI()
 {
-
+    SP++;
+    status = read(0x0100 + SP);//The status register was the last value pushed on and so its the first value popped off
+    SP++;
+    PC = (uint16_t)read(0x0100 + SP);
+    SP++;
+    PC |= (uint16_t)read(0x0100 + SP) << 8;
     return 0;
 }
 
