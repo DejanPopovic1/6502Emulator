@@ -73,7 +73,7 @@ private:
     Byte SP, PC;
     flagsRegister flagsRegister;
 
-    Byte getFlag();
+    Byte getFlag(enum flagsRegister);
     void setFlag(enum flagsRegister);
     void clearFlag(enum flagsRegister);
 

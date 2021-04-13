@@ -48,6 +48,7 @@ void Processor::write(uint16_t a, uint8_t d){
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //Understand this in more detail
+//Use AND() as an example to run through this
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 void Processor::clock(){
     if(cycles == 0){
@@ -91,6 +92,16 @@ void Processor::setFlag(enum flagsRegister f){
 
 void Processor::clearFlag(enum flagsRegister f){
     status &= ~f;
+}
+
+Byte Processor::getFlag(enum flagsRegister f){
+    Byte test = (status & f);
+    if(test > 0){
+        return 1;
+    }
+    else{
+        return 0;
+    }
 }
 
 //The addressing modes all return the absolute address and secondary they tell us if there are any additional instructions required. They do nothing else
@@ -262,7 +273,14 @@ uint8_t Processor::BCC()
 
 uint8_t Processor::BCS()
 {
-
+    if(getFlag(C) == 1){
+        cycles++;
+        addr_abs = PC + addr_rel;
+        if((addr_abs & 0xFF00) != (PC & 0xFF00)){
+            cycles++;
+        }
+        PC = addr_abs;
+    }
     return 0;
 }
 
