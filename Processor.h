@@ -14,11 +14,11 @@ using Word = uint16_t;
 using u32 = uint32_t;
 using s32 = int32_t;
 
-
 class Memory;
 
 class Processor{
-    enum flagsRegister{C = 1, Z, I, D, B, U, V, N};
+    //Refactor into bit fields
+    enum flagsRegister{C = (1 << 0), Z = (1 << 1), I = (1 << 2), D = (1 << 3), B = (1 << 4), U = (1 << 5), V = (1 << 6), N = (1 << 7)};
 public:
     Processor();
     ~Processor();
