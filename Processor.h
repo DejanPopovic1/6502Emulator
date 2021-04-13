@@ -39,6 +39,7 @@ public:
     uint8_t IND();
     uint8_t IZY();
     //OpCodes
+    //Add descriptions of these in the file with a special escape character
     //Rather store these in a seperate file so that when function pointers point to them, we dont use class function pointers
     //Load/Store Operations | Register Transfers | Stack Operations | Logical        | Arithmetic     | Increments & Decrements | Shifts         | Jumps & Calls  | Branches       | Status Flag Changes | System Functions
     uint8_t LDA();            uint8_t TAX();       uint8_t TSX();     uint8_t AND();   uint8_t ADC();   uint8_t INC();            uint8_t ASL();   uint8_t JMP();   uint8_t BCC();   uint8_t CLC();        uint8_t BRK();

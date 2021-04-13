@@ -582,10 +582,14 @@ uint8_t Processor::PHP()
     return 0;
 }
 
-
+//We first increment the stack pointer
+//Macro the value 0x80
 uint8_t Processor::PLA()
 {
-
+    SP++;
+    A = read(0x0100 + SP);
+    setOrClearFlag(Z, A == 0x00);
+    setOrClearFlag(N, A & 0x80);
     return 0;
 }
 
