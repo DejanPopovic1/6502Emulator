@@ -17,9 +17,10 @@ using s32 = int32_t;
 class Memory;
 
 class Processor{
+
+public:
     //Refactor into bit fields
     enum flagsRegister{C = (1 << 0), Z = (1 << 1), I = (1 << 2), D = (1 << 3), B = (1 << 4), U = (1 << 5), V = (1 << 6), N = (1 << 7)};
-public:
     Processor();
     ~Processor();
     void connectMemory(Memory *mem);
@@ -70,7 +71,7 @@ private:
     //The range of the SP is from
     Byte A, X, Y;
     Byte SP, PC;
-    Byte flagsRegister;
+    flagsRegister flagsRegister;
 
     Byte getFlag();
     void setFlag(enum flagsRegister);
@@ -85,6 +86,8 @@ private:
     };
 
     std::vector<Instruction> lookup;
+
+    void setOrClearFlag(enum Processor::flagsRegister f, bool isSet);
 };
 
 

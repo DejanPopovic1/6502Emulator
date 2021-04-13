@@ -76,6 +76,15 @@ uint8_t Processor::fetch(){
 
 }
 
+void Processor::setOrClearFlag(enum flagsRegister, bool isSet){
+    if(isSet){
+        setFlag(Processor::flagsRegister);
+    }
+    else if(!isSet) {
+        clearFlag(flagsRegister);
+    }
+}
+
 void Processor::setFlag(enum flagsRegister f){
     status |= f;
 }
@@ -230,10 +239,10 @@ uint8_t Processor::SBC()
 
 uint8_t Processor::AND()
 {
-//    fetch();
-//    A = A & fetched;
-//    setFlag(Z, A == 0x00);
-//    return 1;
+    fetch();
+    this->A = this->A & this->fetched;
+    setOrClearFlag(Z, A == 0x00);
+    return 1;
 }
 
 
