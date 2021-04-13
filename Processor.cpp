@@ -34,6 +34,18 @@ Processor::~Processor(){
 
 }
 
+//Add clear and set enums
+void Processor::irq(){
+    if(!getFlag(I)){
+        write(0x0100 + SP, (PC >> 8) & 0x00FF);
+        SP--;
+        write(0x0100 + SP, PC & 0x00FF);
+        SP--;
+
+    }
+
+}
+
 void Processor::connectMemory(Memory *m){
     this->mem = m;
 }
