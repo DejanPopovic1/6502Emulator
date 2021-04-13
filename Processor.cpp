@@ -242,6 +242,7 @@ uint8_t Processor::AND()
     fetch();
     this->A = this->A & this->fetched;
     setOrClearFlag(Z, A == 0x00);
+    setOrClearFlag(N, A & 0x80);
     return 1;
 }
 
