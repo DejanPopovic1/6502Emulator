@@ -420,7 +420,7 @@ uint8_t Processor::CLI()
 
 uint8_t Processor::CLV()
 {
-
+    setFlag(V, false);
     return 0;
 }
 
