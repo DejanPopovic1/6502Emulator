@@ -399,7 +399,7 @@ uint8_t Processor::BVS()
 
 uint8_t Processor::CLC()
 {
-
+    setOrClearFlag(C, false);
     return 0;
 }
 
