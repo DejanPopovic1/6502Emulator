@@ -71,7 +71,8 @@ private:
     //The upper significant 8 bits are hardcoded to 1. i.e. SP value is always 0000001xxxxxxxx
     //The range of the SP is from
     Byte A, X, Y;
-    Byte SP, PC;
+    Byte SP;
+    Word PC;
     flagsRegister flagsRegister;
 
     Byte getFlag(enum flagsRegister);

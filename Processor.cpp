@@ -77,6 +77,25 @@ uint8_t Processor::fetch(){
 
 }
 
+//Refactor into read Byte
+void Processor::reset(){
+    A = 0;
+    X = 0;
+    Y = 0;
+    SP = 0xFD;
+    status = 0x00;
+    addr_abs = 0xFFFC;
+    uint16_t low = read(addr_abs + 0);
+    uint16_t high = read(addr_abs + 1);
+    PC = (high << 8) | low;
+    addr_rel = 0x0000;
+    addr_abs = 0x0000;
+    fetched = 0x00;
+
+    cycles = 8;
+
+}
+
 void Processor::setOrClearFlag(enum flagsRegister, bool isSet){
     if(isSet){
         setFlag(Processor::flagsRegister);
