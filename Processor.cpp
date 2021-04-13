@@ -419,14 +419,14 @@ uint8_t Processor::CLD()
 
 uint8_t Processor::CLI()
 {
-    setFlag(I, false);
+    setOrClearFlag(I, false);
     return 0;
 }
 
 
 uint8_t Processor::CLV()
 {
-    setFlag(V, false);
+    setOrClearFlag(V, false);
     return 0;
 }
 
