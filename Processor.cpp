@@ -360,7 +360,16 @@ uint8_t Processor::BRK()
 
 uint8_t Processor::BVC()
 {
+    if (getFlag(V) == 0)
+    {
+        cycles++;
+        addr_abs = PC + addr_rel;
 
+        if ((addr_abs & 0xFF00) != (PC & 0xFF00))
+            cycles++;
+
+        PC = addr_abs;
+    }
     return 0;
 }
 
