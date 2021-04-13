@@ -65,6 +65,18 @@ void Processor::clock(){
     cycles--;
 }
 
+//Come back to this and understand this a bit better
+//Need to understand the opcode field. Seems to be indexed number
+uint8_t Processor::fetch(){
+    if(!(lookup[opcode].addrmode == &Processor::IMP)){
+        fetched = read(addr_abs);
+    }
+    return this->fetched;
+
+
+}
+
+//The addressing modes all return the absolute address and secondary they tell us if there are any additional instructions required. They do nothing else
 
 uint8_t Processor::IMP(){
     this->fetched = this->A;
