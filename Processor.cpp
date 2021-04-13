@@ -296,8 +296,7 @@ uint8_t Processor::IZY(){
     return 0;
 }
 
-uint8_t Processor::ADC()
-{
+uint8_t Processor::ADC(){
     fetch();
     uint16_t temp = (uint16_t)A + (uint16_t)fetched + (uint16_t)getFlag(C);
     setOrClearFlag(C, temp > 255);
@@ -310,8 +309,7 @@ uint8_t Processor::ADC()
 
 
 
-uint8_t Processor::SBC()
-{
+uint8_t Processor::SBC(){
     fetch();
 
     // Operating in 16-bit domain to capture carry out
@@ -329,8 +327,7 @@ uint8_t Processor::SBC()
     return 1;
 }
 
-uint8_t Processor::AND()
-{
+uint8_t Processor::AND(){
     fetch();
     this->A = this->A & this->fetched;
     setOrClearFlag(Z, A == 0x00);
@@ -339,15 +336,14 @@ uint8_t Processor::AND()
 }
 
 
-uint8_t Processor::ASL()
-{
-
+uint8_t Processor::ASL(){
+    setOrClearFlag(C, A & 0x80);
+    A = A << 1;
     return 0;
 }
 
 
-uint8_t Processor::BCC()
-{
+uint8_t Processor::BCC(){
     if (getFlag(C) == 0)
     {
         cycles++;
@@ -360,8 +356,7 @@ uint8_t Processor::BCC()
     return 0;
 }
 
-uint8_t Processor::BCS()
-{
+uint8_t Processor::BCS(){
     if(getFlag(C) == 1){
         cycles++;
         addr_abs = PC + addr_rel;
@@ -373,8 +368,7 @@ uint8_t Processor::BCS()
     return 0;
 }
 
-uint8_t Processor::BEQ()
-{
+uint8_t Processor::BEQ(){
     if (getFlag(Z) == 1)
     {
         cycles++;
@@ -388,15 +382,13 @@ uint8_t Processor::BEQ()
     return 0;
 }
 
-uint8_t Processor::BIT()
-{
+uint8_t Processor::BIT(){
 
     return 0;
 }
 
 
-uint8_t Processor::BMI()
-{
+uint8_t Processor::BMI(){
     if (getFlag(N) == 1)
     {
         cycles++;
@@ -410,8 +402,7 @@ uint8_t Processor::BMI()
     return 0;
 }
 
-uint8_t Processor::BNE()
-{
+uint8_t Processor::BNE(){
     if (getFlag(Z) == 0)
     {
         cycles++;
@@ -425,8 +416,7 @@ uint8_t Processor::BNE()
     return 0;
 }
 
-uint8_t Processor::BPL()
-{
+uint8_t Processor::BPL(){
     if (getFlag(N) == 0)
     {
         cycles++;
@@ -441,14 +431,12 @@ uint8_t Processor::BPL()
 }
 
 
-uint8_t Processor::BRK()
-{
+uint8_t Processor::BRK(){
     return 0;
 }
 
 
-uint8_t Processor::BVC()
-{
+uint8_t Processor::BVC(){
     if (getFlag(V) == 0)
     {
         cycles++;
@@ -463,8 +451,7 @@ uint8_t Processor::BVC()
 }
 
 
-uint8_t Processor::BVS()
-{
+uint8_t Processor::BVS(){
     if (getFlag(V) == 1)
     {
         cycles++;
@@ -478,151 +465,129 @@ uint8_t Processor::BVS()
 }
 
 
-uint8_t Processor::CLC()
-{
+uint8_t Processor::CLC(){
     setOrClearFlag(C, false);
     return 0;
 }
 
 
-uint8_t Processor::CLD()
-{
+uint8_t Processor::CLD(){
     setOrClearFlag(D, false);
     return 0;
 }
 
 
-uint8_t Processor::CLI()
-{
+uint8_t Processor::CLI(){
     setOrClearFlag(I, false);
     return 0;
 }
 
 
-uint8_t Processor::CLV()
-{
+uint8_t Processor::CLV(){
     setOrClearFlag(V, false);
     return 0;
 }
 
 
-uint8_t Processor::CMP()
-{
+uint8_t Processor::CMP(){
 
     return 1;
 }
 
 
-uint8_t Processor::CPX()
-{
+uint8_t Processor::CPX(){
 
     return 0;
 }
 
 
-uint8_t Processor::CPY()
-{
+uint8_t Processor::CPY(){
 
     return 0;
 }
 
 
-uint8_t Processor::DEC()
-{
+uint8_t Processor::DEC(){
 
     return 0;
 }
 
 
-uint8_t Processor::DEX()
-{
+uint8_t Processor::DEX(){
 
     return 0;
 }
 
 
-uint8_t Processor::DEY()
-{
+uint8_t Processor::DEY(){
 
     return 0;
 }
 
 
-uint8_t Processor::EOR()
-{
+uint8_t Processor::EOR(){
 
     return 1;
 }
 
 
-uint8_t Processor::INC()
-{
+uint8_t Processor::INC(){
 
     return 0;
 }
 
 
-uint8_t Processor::INX()
-{
+uint8_t Processor::INX(){
 
     return 0;
 }
 
-uint8_t Processor::INY()
-{
-
-    return 0;
-}
-
-
-uint8_t Processor::JMP()
-{
-
-    return 0;
-}
-
-uint8_t Processor::JSR()
-{
+uint8_t Processor::INY(){
 
     return 0;
 }
 
 
-uint8_t Processor::LDA()
-{
+uint8_t Processor::JMP(){
+
+    return 0;
+}
+
+uint8_t Processor::JSR(){
+
+    return 0;
+}
+
+
+uint8_t Processor::LDA(){
 
     return 1;
 }
 
 
-uint8_t Processor::LDX()
-{
+uint8_t Processor::LDX(){
 
     return 1;
 }
 
 
-uint8_t Processor::LDY()
-{
+uint8_t Processor::LDY(){
 
     return 1;
 }
 
-uint8_t Processor::LSR()
-{
+uint8_t Processor::LSR(){
 
     return 0;
 }
 
-uint8_t Processor::NOP()
-{
+uint8_t Processor::NOP(){
 
     return 0;
 }
 
 
-uint8_t Processor::ORA()
-{
+uint8_t Processor::ORA(){
 
     return 1;
 }
@@ -630,24 +595,21 @@ uint8_t Processor::ORA()
 //6502 has a base location in memory for the stack pointer which is located in page 0x0100
 //Add a MACRO for this so that it explains it
 //The stack pointer grows downwards and therefore everytime we push onto it, we decrement
-uint8_t Processor::PHA()
-{
+uint8_t Processor::PHA(){
     write(0x0100 + SP, A);
     SP--;
     return 0;
 }
 
 
-uint8_t Processor::PHP()
-{
+uint8_t Processor::PHP(){
 
     return 0;
 }
 
 //We first increment the stack pointer
 //Macro the value 0x80
-uint8_t Processor::PLA()
-{
+uint8_t Processor::PLA(){
     SP++;
     A = read(0x0100 + SP);
     setOrClearFlag(Z, A == 0x00);
@@ -656,27 +618,23 @@ uint8_t Processor::PLA()
 }
 
 
-uint8_t Processor::PLP()
-{
+uint8_t Processor::PLP(){
 
     return 0;
 }
 
-uint8_t Processor::ROL()
-{
+uint8_t Processor::ROL(){
 
     return 0;
 }
 
-uint8_t Processor::ROR()
-{
+uint8_t Processor::ROR(){
 
     return 0;
 }
 
 //Return from interrupt
-uint8_t Processor::RTI()
-{
+uint8_t Processor::RTI(){
     SP++;
     status = read(0x0100 + SP);//The status register was the last value pushed on and so its the first value popped off
     SP++;
@@ -686,89 +644,75 @@ uint8_t Processor::RTI()
     return 0;
 }
 
-uint8_t Processor::RTS()
-{
+uint8_t Processor::RTS(){
 
     return 0;
 }
 
 
-uint8_t Processor::SEC()
-{
+uint8_t Processor::SEC(){
 
     return 0;
 }
 
 
-uint8_t Processor::SED()
-{
+uint8_t Processor::SED(){
     return 0;
 }
 
 
-uint8_t Processor::SEI()
-{
+uint8_t Processor::SEI(){
 
     return 0;
 }
 
 
-uint8_t Processor::STA()
-{
+uint8_t Processor::STA(){
 
     return 0;
 }
 
-uint8_t Processor::STX()
-{
+uint8_t Processor::STX(){
 
     return 0;
 }
 
-uint8_t Processor::STY()
-{
+uint8_t Processor::STY(){
 
     return 0;
 }
 
-uint8_t Processor::TAX()
-{
+uint8_t Processor::TAX(){
 
     return 0;
 }
 
 
 
-uint8_t Processor::TAY()
-{
+uint8_t Processor::TAY(){
 
     return 0;
 }
 
-uint8_t Processor::TSX()
-{
+uint8_t Processor::TSX(){
 
     return 0;
 }
 
-uint8_t Processor::TXA()
-{
+uint8_t Processor::TXA(){
 
     return 0;
 }
 
-uint8_t Processor::TXS()
-{
+uint8_t Processor::TXS(){
     return 0;
 }
 
-uint8_t Processor::TYA()
-{
+uint8_t Processor::TYA(){
     return 0;
 }
 
-uint8_t Processor::XXX()
-{
+uint8_t Processor::XXX(){
     return 0;
 }
 
