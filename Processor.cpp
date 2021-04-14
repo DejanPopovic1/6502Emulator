@@ -4,9 +4,14 @@
 #include "Processor.h"
 #include "Memory.h"
 
+//There are too many internal class variables. Following program and function execution is therefore very difficult.
+//Rather pass around variables between the functions and cut down on the class variables
+
+//When adding the diassembler, it should be in a seperate class called disassembler. In any case this should be in backlog
 Processor::Processor(){
     using a = Processor;
     //Rather add this in a separate text resource file
+    //The name is one to one correlation to the function name. Perhaps give the full name instead? Will need to align in this case
     this->lookup =
             {
                     { "BRK", &a::BRK, &a::IMM, 7 },{ "ORA", &a::ORA, &a::IZX, 6 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "???", &a::NOP, &a::IMP, 3 },{ "ORA", &a::ORA, &a::ZP0, 3 },{ "ASL", &a::ASL, &a::ZP0, 5 },{ "???", &a::XXX, &a::IMP, 5 },{ "PHP", &a::PHP, &a::IMP, 3 },{ "ORA", &a::ORA, &a::IMM, 2 },{ "ASL", &a::ASL, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::NOP, &a::IMP, 4 },{ "ORA", &a::ORA, &a::ABS, 4 },{ "ASL", &a::ASL, &a::ABS, 6 },{ "???", &a::XXX, &a::IMP, 6 },
@@ -89,28 +94,29 @@ void Processor::write(uint16_t a, uint8_t d){
     this->mem->write(a, d);
 }
 
+//Next two functions. Clock calls the instruction and the instruction calls fetch
+
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //Understand this in more detail
 //Use AND() as an example to run through this
+//This is the main "runner" of the processor and the function pointer runs the instruction
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 void Processor::clock(){
+    //If cycles == 0, then it means that the next instruction is due, together with its operands.
+    //If its non-zero, it means an instruction, and the fetching of its operands, is currently being executed and we just decrement our way through it
     if(cycles == 0){
         opcode = read(this->PC);
         this->PC++;
-
         cycles = lookup[opcode].cycles;
-
-        uint8_t additional_cycle1 = (this->*lookup[opcode].addrmode)();
+        uint8_t additional_cycle1 = (this->*lookup[opcode].addrmode)();//We must fix this. This function addrmode changes the class variable state addr_abs and other variables including PC
+        //At this point in time, we have fetched the absolute address depending on the address mode above. Only now can we operate on the addr_abs
         uint8_t additional_cycle2 = (this->*lookup[opcode].operate)();
-        cycles += (additional_cycle1 & additional_cycle2);
-
+        cycles += (additional_cycle1 & additional_cycle2);//We must fix this. Using bit operations on this seems like overkill. Add_cycle_1 and add_cycle_2 either returns a 0 or 1. Make this explicit here.
     }
-
     cycles--;
 }
 
-//Come back to this and understand this a bit better
-//Need to understand the opcode field. Seems to be indexed number
+//Fetch returns a value we hardly ever use. It rather changes internal class variables. Should it therefore not be redesigned? (it also adds to confusion and code tracing)
 uint8_t Processor::fetch(){
     if(!(lookup[opcode].addrmode == &Processor::IMP)){
         fetched = read(addr_abs);
@@ -168,6 +174,7 @@ Byte Processor::getFlag(enum flagsRegister f){
 
 //The addressing modes all return the absolute address and secondary they tell us if there are any additional instructions required. They do nothing else
 
+//Implied still "fetches" the operand, albeit not from memory. Its in the accumulator.
 uint8_t Processor::IMP(){
     this->fetched = this->A;
     return 0;
@@ -296,6 +303,11 @@ uint8_t Processor::IZY(){
     return 0;
 }
 
+
+//====================
+//INSTRUCTIONS
+//====================
+
 uint8_t Processor::ADC(){
     fetch();
     uint16_t temp = (uint16_t)A + (uint16_t)fetched + (uint16_t)getFlag(C);
@@ -311,13 +323,7 @@ uint8_t Processor::ADC(){
 
 uint8_t Processor::SBC(){
     fetch();
-
-    // Operating in 16-bit domain to capture carry out
-
-    // We can invert the bottom 8 bits with bitwise xor
     uint16_t value = ((uint16_t)fetched) ^ 0x00FF;
-
-    // Notice this is exactly the same as addition from here!
     uint16_t temp = (uint16_t)A + value + (uint16_t)getFlag(C);
     setOrClearFlag(C, temp & 0xFF00);
     setOrClearFlag(Z, ((temp & 0x00FF) == 0));
@@ -337,9 +343,7 @@ uint8_t Processor::AND(){
 
 
 uint8_t Processor::ASL(){
-    setOrClearFlag(C, A & 0x80);
-    A = A << 1;
-    return 0;
+
 }
 
 
