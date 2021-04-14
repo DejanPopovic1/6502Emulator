@@ -343,7 +343,17 @@ uint8_t Processor::AND(){
 
 
 uint8_t Processor::ASL(){
-
+    fetch();//If its implied addressing mode, it wont update any internal variables. One of the addressing modes is implied.
+    setOrClearFlag(C, fetched & 0x80);
+    setOrClearFlag(Z, !(fetched << 1));
+    setOrClearFlag(N, (fetched << 1) & 0x80);
+    if(lookup[opcode].addrmode == &Processor::IMP){
+        A = (fetched << 1);
+    }
+    else {
+        write(addr_abs, fetched << 1);
+    }
+    return 0;
 }
 
 
