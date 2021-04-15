@@ -90,8 +90,8 @@ uint8_t Processor::read(uint16_t a){
     return this->mem->read(a, false);
 }
 
-void Processor::write(uint16_t a, uint8_t d){
-    this->mem->write(a, d);
+void Processor::write(uint16_t addressSpace, uint8_t b){
+    this->mem->write(addressSpace, b);
 }
 
 //Next two functions. Clock calls the instruction and the instruction calls fetch
@@ -449,6 +449,26 @@ uint8_t Processor::BPL(){
 
 
 uint8_t Processor::BRK(){
+    fetch();//The only mode for BRK is implied and therefore this statement could be ignored.
+    PC++;
+
+    write(0x0100 + SP, PC >> 8);//The second argument gets converted to a byte & therefore no reason to narrow the passed argument
+    SP--;
+    write(0x0100 + SP, PC);//The second argument gets converted to a byte & therefore no reason to narrow the passed argument
+    SP--;
+    //We must disable the interrupt request
+    setOrClearFlag(I, true);
+    //And break command to indicate that it is in break mode
+    setOrClearFlag(B, 1);
+    write(0x0100 + SP, status);
+    //Undo the above command after weve written it to memory
+    setOrClearFlag(B, 0);
+    SP--;
+
+    //The interrupt vector is located at FFFE and this should be a macro called INTERRUPT_VECTOR_LOCATION
+    //The interrupt vector location will itself house the location of where the PC needs to point to
+    //In essence, before calling a break, the location of the break pointer needs to be placed in the interrupt vector at the very end of the memory address space
+    PC = (uint16_t)read(0xFFFE) | ((uint16_t)read(0xFFFF) << 8);
     return 0;
 }
 
