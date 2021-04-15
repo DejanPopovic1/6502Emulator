@@ -7,7 +7,9 @@
 //There are too many internal class variables. Following program and function execution is therefore very difficult.
 //Rather pass around variables between the functions and cut down on the class variables
 
-//When adding the diassembler, it should be in a seperate class called disassembler. In any case this should be in backlog
+//Be careful when handling flags. Must change some of them. Sometimes they must be explicitly set and otherwise nothing is done. Other times, the value of the flag must be equal to
+//the value of the bit
+//When adding the dis assembler, it should be in a separate class called disassembler. In any case this should be in backlog
 Processor::Processor(){
     using a = Processor;
     //Rather add this in a separate text resource file
@@ -552,7 +554,11 @@ uint8_t Processor::CPY(){
 }
 
 uint8_t Processor::DEC(){
-
+    fetch();
+    fetched--;
+    write(addr_abs, fetched);
+    setOrClearFlag(Z, !fetched);
+    setOrClearFlag(N, fetched & (1 << 7));
     return 0;
 }
 
