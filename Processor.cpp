@@ -563,7 +563,9 @@ uint8_t Processor::DEC(){
 }
 
 uint8_t Processor::DEX(){
-
+    X--;
+    setOrClearFlag(Z, !X);
+    setOrClearFlag(N, X & (1 << 7));
     return 0;
 }
 
