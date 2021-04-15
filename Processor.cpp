@@ -527,7 +527,10 @@ uint8_t Processor::CLV(){
 
 
 uint8_t Processor::CMP(){
-
+    fetch();
+    setOrClearFlag(C, A >= fetched);
+    setOrClearFlag(Z, A == fetched);
+    setOrClearFlag(N, (A - fetched) & (1 << 7));//MACRO this. Also be consistent with 1 << 7 and using 0x0080
     return 1;
 }
 
