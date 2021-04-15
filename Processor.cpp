@@ -211,6 +211,7 @@ uint8_t Processor::ABY(){
     this->PC++;
     this->addr_abs = (highByte << 8) | lowByte;
     this->addr_abs += this->Y;
+    //Cross page boundary
     if((addr_abs & 0xFF00) != (highByte << 8)){
         return 1;//"May" need an additional clock cycle
     }
@@ -263,7 +264,8 @@ uint8_t Processor::ABX(){
     this->PC++;
     this->addr_abs = (highByte << 8) | lowByte;
     this->addr_abs += this->X;
-    if((addr_abs & 0xFF00) != (highByte << 8)){
+    //Cross page boundary
+    if((addr_abs & 0xFF00) != (highByte << 8)){//Cross page boundary
         return 1;//"May" need an additional clock cycle
     }
     else {
@@ -295,7 +297,7 @@ uint8_t Processor::IZY(){
     this->addr_abs = (high << 8) | low;
     addr_abs += Y;
     if(addr_abs & 0xFF00 != (high << 8)){
-        return 1;
+        return 1;//"May" need an additional clock cycle
     }
     else{
         return 0;
@@ -525,7 +527,6 @@ uint8_t Processor::CLV(){
     return 0;
 }
 
-
 uint8_t Processor::CMP(){
     fetch();
     setOrClearFlag(C, A >= fetched);
@@ -534,48 +535,43 @@ uint8_t Processor::CMP(){
     return 1;
 }
 
-
 uint8_t Processor::CPX(){
-
+    fetch();
+    setOrClearFlag(C, X >= fetched);
+    setOrClearFlag(Z, X == fetched);
+    setOrClearFlag(N, (X - fetched) & (1 << 7));//MACRO this. Also be consistent with 1 << 7 and using 0x0080
     return 0;
 }
-
 
 uint8_t Processor::CPY(){
 
     return 0;
 }
 
-
 uint8_t Processor::DEC(){
 
     return 0;
 }
-
 
 uint8_t Processor::DEX(){
 
     return 0;
 }
 
-
 uint8_t Processor::DEY(){
 
     return 0;
 }
-
 
 uint8_t Processor::EOR(){
 
     return 1;
 }
 
-
 uint8_t Processor::INC(){
 
     return 0;
 }
-
 
 uint8_t Processor::INX(){
 
@@ -587,7 +583,6 @@ uint8_t Processor::INY(){
     return 0;
 }
 
-
 uint8_t Processor::JMP(){
 
     return 0;
@@ -598,18 +593,15 @@ uint8_t Processor::JSR(){
     return 0;
 }
 
-
 uint8_t Processor::LDA(){
 
     return 1;
 }
 
-
 uint8_t Processor::LDX(){
 
     return 1;
 }
-
 
 uint8_t Processor::LDY(){
 
@@ -626,7 +618,6 @@ uint8_t Processor::NOP(){
     return 0;
 }
 
-
 uint8_t Processor::ORA(){
 
     return 1;
@@ -640,7 +631,6 @@ uint8_t Processor::PHA(){
     SP--;
     return 0;
 }
-
 
 uint8_t Processor::PHP(){
 
@@ -656,7 +646,6 @@ uint8_t Processor::PLA(){
     setOrClearFlag(N, A & 0x80);
     return 0;
 }
-
 
 uint8_t Processor::PLP(){
 
@@ -689,23 +678,19 @@ uint8_t Processor::RTS(){
     return 0;
 }
 
-
 uint8_t Processor::SEC(){
 
     return 0;
 }
 
-
 uint8_t Processor::SED(){
     return 0;
 }
-
 
 uint8_t Processor::SEI(){
 
     return 0;
 }
-
 
 uint8_t Processor::STA(){
 
@@ -726,8 +711,6 @@ uint8_t Processor::TAX(){
 
     return 0;
 }
-
-
 
 uint8_t Processor::TAY(){
 
@@ -755,5 +738,3 @@ uint8_t Processor::TYA(){
 uint8_t Processor::XXX(){
     return 0;
 }
-
-
