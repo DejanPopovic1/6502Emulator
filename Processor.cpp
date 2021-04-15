@@ -585,7 +585,11 @@ uint8_t Processor::EOR(){
 }
 
 uint8_t Processor::INC(){
-
+    fetch();
+    fetched++;
+    write(addr_abs, fetched);
+    setOrClearFlag(Z, !fetched);
+    setOrClearFlag(N, fetched & (1 << 7));
     return 0;
 }
 
