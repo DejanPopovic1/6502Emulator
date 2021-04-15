@@ -577,7 +577,10 @@ uint8_t Processor::DEY(){
 }
 
 uint8_t Processor::EOR(){
-
+    fetch();
+    A ^= fetched;
+    setOrClearFlag(Z, !A);
+    setOrClearFlag(N, A & (1 << 7));
     return 1;
 }
 
