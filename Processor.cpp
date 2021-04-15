@@ -397,7 +397,10 @@ uint8_t Processor::BEQ(){
 }
 
 uint8_t Processor::BIT(){
-
+    fetch();
+    setOrClearFlag(Z, !fetched & A);
+    setOrClearFlag(V, fetched & 0x40);//Sixth bit. Add macro's
+    setOrClearFlag(N, fetched & 0x80);//Seventh bit. Add macro's
     return 0;
 }
 
