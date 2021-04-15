@@ -601,7 +601,9 @@ uint8_t Processor::INX(){
 }
 
 uint8_t Processor::INY(){
-
+    Y++;
+    setOrClearFlag(Z, !Y);
+    setOrClearFlag(N, Y & (1 << 7));
     return 0;
 }
 
