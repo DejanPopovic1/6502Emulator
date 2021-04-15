@@ -8,6 +8,8 @@
 //There are too many internal class variables. Following program and function execution is therefore very difficult.
 //Rather pass around variables between the functions and cut down on the class variables
 
+//Use setIf flag and setOrClearFlag
+
 //Be careful when handling flags. Must change some of them. Sometimes they must be explicitly set and otherwise nothing is done. Other times, the value of the flag must be equal to
 //the value of the bit
 //When adding the dis assembler, it should be in a separate class called disassembler. In any case this should be in backlog
@@ -648,7 +650,19 @@ uint8_t Processor::LDY(){
 }
 
 uint8_t Processor::LSR(){
-
+    fetch();
+    uint16_t originalFetched = fetched;
+    fetched = fetched >> 1;
+    fetched &= 0x7F;
+    setOrClearFlag(C, originalFetched & 0x01);
+    setOrClearFlag(Z, fetched == 0);
+    setOrClearFlag(N, fetched & (1 << 7));
+    if(lookup[opcode].addrmode == & Processor::IMM){
+        A = fetched;
+    }
+    else{
+        write(addr_abs, fetched);
+    }
     return 0;
 }
 
