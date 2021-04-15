@@ -4,6 +4,7 @@
 #include "Processor.h"
 #include "Memory.h"
 
+//Derive from an abstract class to derive the 6502 processor class
 //There are too many internal class variables. Following program and function execution is therefore very difficult.
 //Rather pass around variables between the functions and cut down on the class variables
 
@@ -613,7 +614,12 @@ uint8_t Processor::JMP(){
 }
 
 uint8_t Processor::JSR(){
-
+    uint16_t addressToBePushed = PC - 1;
+    write(0x0100 + SP, addressToBePushed >> 8);//If this is an error, then try (addressToBePushed >> 8) & 0x00FF
+    SP--;
+    write(0x0100 + SP, addressToBePushed);//If this is an error, then try (addressToBePushed) & 0x00FF
+    SP--;
+    PC = addr_abs;
     return 0;
 }
 
