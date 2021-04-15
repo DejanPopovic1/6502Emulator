@@ -570,7 +570,9 @@ uint8_t Processor::DEX(){
 }
 
 uint8_t Processor::DEY(){
-
+    Y--;
+    setOrClearFlag(Z, !Y);
+    setOrClearFlag(N, Y & (1 << 7));
     return 0;
 }
 
