@@ -1,0 +1,1 @@
+Illegal opcodes NOT emulated

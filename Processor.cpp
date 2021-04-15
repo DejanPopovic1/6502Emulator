@@ -667,7 +667,6 @@ uint8_t Processor::LSR(){
 }
 
 uint8_t Processor::NOP(){
-
     return 0;
 }
 
