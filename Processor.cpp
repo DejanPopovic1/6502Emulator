@@ -640,7 +640,10 @@ uint8_t Processor::LDX(){
 }
 
 uint8_t Processor::LDY(){
-
+    fetch();
+    Y = fetched;
+    setOrClearFlag(Z, Y == 0);
+    setOrClearFlag(N, Y & (1 << 7));
     return 1;
 }
 
