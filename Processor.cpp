@@ -632,7 +632,10 @@ uint8_t Processor::LDA(){
 }
 
 uint8_t Processor::LDX(){
-
+    fetch();
+    X = fetched;
+    setOrClearFlag(Z, X == 0);
+    setOrClearFlag(N, X & (1 << 7));
     return 1;
 }
 
