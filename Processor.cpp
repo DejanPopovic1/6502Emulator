@@ -624,7 +624,10 @@ uint8_t Processor::JSR(){
 }
 
 uint8_t Processor::LDA(){
-
+    fetch();
+    A = fetched;
+    setOrClearFlag(Z, A == 0);
+    setOrClearFlag(N, A & (1 << 7));
     return 1;
 }
 
