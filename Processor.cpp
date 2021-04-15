@@ -594,7 +594,9 @@ uint8_t Processor::INC(){
 }
 
 uint8_t Processor::INX(){
-
+    X++;
+    setOrClearFlag(Z, !X);
+    setOrClearFlag(N, X & (1 << 7));
     return 0;
 }
 
