@@ -608,7 +608,7 @@ uint8_t Processor::INY(){
 }
 
 uint8_t Processor::JMP(){
-
+    PC = addr_abs;
     return 0;
 }
 
