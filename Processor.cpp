@@ -544,7 +544,10 @@ uint8_t Processor::CPX(){
 }
 
 uint8_t Processor::CPY(){
-
+    fetch();
+    setOrClearFlag(C, Y >= fetched);
+    setOrClearFlag(Z, Y == fetched);
+    setOrClearFlag(N, (Y - fetched) & (1 << 7));//MACRO this. Also be consistent with 1 << 7 and using 0x0080
     return 0;
 }
 
