@@ -838,7 +838,7 @@ uint8_t Processor::STX(){
 }
 
 uint8_t Processor::STY(){
-
+    write(addr_abs, Y);
     return 0;
 }
 
