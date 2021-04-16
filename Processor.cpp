@@ -823,7 +823,7 @@ uint8_t Processor::SED(){
 }
 
 uint8_t Processor::SEI(){
-
+    setOrClearFlag(I, true);
     return 0;
 }
 
