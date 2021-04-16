@@ -833,7 +833,7 @@ uint8_t Processor::STA(){
 }
 
 uint8_t Processor::STX(){
-
+    write(addr_abs, X);
     return 0;
 }
 
