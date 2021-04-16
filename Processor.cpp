@@ -813,7 +813,7 @@ uint8_t Processor::RTS(){
 }
 
 uint8_t Processor::SEC(){
-
+    setOrClearFlag(C, true);
     return 0;
 }
 
