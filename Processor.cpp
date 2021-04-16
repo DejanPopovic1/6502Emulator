@@ -828,7 +828,7 @@ uint8_t Processor::SEI(){
 }
 
 uint8_t Processor::STA(){
-
+    write(addr_abs, A);
     return 0;
 }
 
