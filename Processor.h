@@ -62,6 +62,7 @@ public:
     Byte opcode = 0;
     Byte cycles = 0;
 
+    //If the internal inhibit(I am assuming that this is the IRQ Disable flag) is set, then the interrupt is ignored.
     uint8_t status = 0x00;
 
 private:

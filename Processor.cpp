@@ -775,6 +775,22 @@ uint8_t Processor::ROR(){
 }
 
 //Return from interrupt
+//Pg 25 from Synertek:
+//The interrupt disable, I, is set by the microprocessor during reset and interrupt commands
+//The I bit is reset by the CLI instruction or the PLP instruction, or at a return from interrupt in which the interrupt disable was reset prior to the interrupt
+
+//Pg 132 from Synertek document:
+//Because the interrupt disable had to be off for an interrupt request to have been honored, the return from interrupt which loads the processor
+//status from before the interrupt occured has the effect of clearing the interrupt disable bit.
+
+//Ibid:
+//All operations should end with a single instruction which reinitialises the microprocessor back to the point at which the interrupt
+//occured. This instruction is called the RTI instruction
+
+//Pg 135 of Synertek:
+//This [interrupt] ignoring is done by the interrupt disable bit which can be set on by the programmer and is initialised on by the interrupt sequence or by the start sequence
+
+//When interrupting, the current status is saved (PC) and the the registers
 uint8_t Processor::RTI(){
     SP++;
     status = read(0x0100 + SP);//The status register was the last value pushed on and so its the first value popped off
@@ -786,8 +802,14 @@ uint8_t Processor::RTI(){
 }
 
 uint8_t Processor::RTS(){
-
+    SP++;
+    uint16_t low = read(0x0100 + (SP));
+    SP++;
+    uint16_t high = read(0x0100 + (SP)) << 8;
+    addr_abs = high | low;
+    PC++;
     return 0;
+    //Do NOT need to update addr_abs thats only for feeding arguments to instructions
 }
 
 uint8_t Processor::SEC(){
