@@ -843,7 +843,9 @@ uint8_t Processor::STY(){
 }
 
 uint8_t Processor::TAX(){
-
+    X = A;
+    setOrClearFlag(C, X == 0);
+    setOrClearFlag(N, X & (1 << 7));
     return 0;
 }
 
