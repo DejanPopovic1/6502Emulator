@@ -857,23 +857,32 @@ uint8_t Processor::TAY(){
 }
 
 uint8_t Processor::TSX(){
-
+    X = SP;
+    setOrClearFlag(C, X == 0);
+    setOrClearFlag(N, X & (1 << 7));
     return 0;
 }
 
 uint8_t Processor::TXA(){
-
+    A = X;
+    setOrClearFlag(C, A == 0);
+    setOrClearFlag(N, A & (1 << 7));
     return 0;
 }
 
 uint8_t Processor::TXS(){
+    SP = X;
     return 0;
 }
 
 uint8_t Processor::TYA(){
+    A = Y;
+    setOrClearFlag(C, A == 0);
+    setOrClearFlag(N, A & (1 << 7));
     return 0;
 }
 
+//Invalid Instruction
 uint8_t Processor::XXX(){
     return 0;
 }
