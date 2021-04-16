@@ -671,7 +671,10 @@ uint8_t Processor::NOP(){
 }
 
 uint8_t Processor::ORA(){
-
+    fetch();
+    A |= fetched;
+    setOrClearFlag(Z, A == 0);
+    setOrClearFlag(N, A & (1 << 7));
     return 1;
 }
 
