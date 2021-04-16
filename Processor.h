@@ -19,7 +19,7 @@ class Memory;
 class Processor{
 
 public:
-    //Refactor into bit fields
+    //Macro each of the numbers because they are sometimes used by themselves
     enum flagsRegister{C = (1 << 0), Z = (1 << 1), I = (1 << 2), D = (1 << 3), B = (1 << 4), U = (1 << 5), V = (1 << 6), N = (1 << 7)};
     Processor();
     ~Processor();
