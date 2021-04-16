@@ -454,6 +454,21 @@ uint8_t Processor::BPL(){
     return 0;
 }
 
+//""
+//when BRK is encountered, internally the CPU pushes the contents of P onto the stack *with bit 4 set*.
+//""
+
+//Only three hardware interrupts exist:
+//RESET
+//NMI
+//IRQ
+//Note that BRK is a software interrupt
+//Interrupt and its vector in hexadecimal
+//INTERRUPT     LSB         MSB
+//IRQ/BRK       FFFE        FFFF
+//NMI           FFFA        FFFB
+//RESET         FFFC        FFFD
+//See https://en.wikipedia.org/wiki/Interrupts_in_65xx_processors
 
 uint8_t Processor::BRK(){
     fetch();//The only mode for BRK is implied and therefore this statement could be ignored.
@@ -687,8 +702,23 @@ uint8_t Processor::PHA(){
     return 0;
 }
 
-uint8_t Processor::PHP(){
 
+//" "
+// PHP and BRK both always set bits 4 and 5 of the byte they push on the stack. NMI and IRQ both always clear bit 4 and set bit 5 of the byte they push on the stack.
+// Thus, the status flags register only has 6 bits, not 8.
+//If you read the descriptions of the B flag, you'll see that based on most descriptions that say it exists, there's no way to actually read its contents, hence it doesn't actually exist.
+// It's like the E bit hidden away in every 6502 processor, which enables a super 128-bit processing mode, but that can't ever be set by any instruction unfortunately.
+//" "
+//I think that the B and U flags are cleared and that the break flag is set to 1 before a push. Double check if this is the case. Check:
+//https://wiki.nesdev.com/w/index.php/Status_flags
+//http://forums.nesdev.com/viewtopic.php?p=64224#p64224
+//
+uint8_t Processor::PHP(){
+    uint8_t temp = status;
+    temp |= (1 << 4);
+    temp |= (1 << 5);
+    write(0x0100 + SP, temp);
+    SP--;
     return 0;
 }
 
