@@ -732,8 +732,10 @@ uint8_t Processor::PLA(){
     return 0;
 }
 
+//Just check because the unused register U might be set to 1. Check David Barr and NES forums
 uint8_t Processor::PLP(){
-
+    SP++;
+    status = read(0x0100 + SP);
     return 0;
 }
 
