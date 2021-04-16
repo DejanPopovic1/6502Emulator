@@ -758,9 +758,10 @@ uint8_t Processor::ROL(){
 
 uint8_t Processor::ROR(){
     fetch();
-    uint8_t oldCarryFlag = fetched & (1 >> 7);
-    uint8_t result = (fetched << 1) & (0xFFFF & (oldCarryFlag >> 7));
-    setOrClearFlag(C, oldCarryFlag);
+    uint8_t newCarryFlagValue = fetched & (1 << 7);
+    uint8_t t = (fetched >> 1) & ~(1 << 7);
+    uint8_t result = t | getFlag(C);
+    setOrClearFlag(C, newCarryFlagValue);
     setOrClearFlag(Z, A == 0);
     setOrClearFlag(N, result & (1 << 7));
     if(lookup[opcode].addrmode == &Processor::IMP){
