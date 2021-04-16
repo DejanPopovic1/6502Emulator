@@ -818,6 +818,7 @@ uint8_t Processor::SEC(){
 }
 
 uint8_t Processor::SED(){
+    setOrClearFlag(D, true);
     return 0;
 }
 
