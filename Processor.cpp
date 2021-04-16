@@ -850,7 +850,9 @@ uint8_t Processor::TAX(){
 }
 
 uint8_t Processor::TAY(){
-
+    Y = A;
+    setOrClearFlag(C, Y == 0);
+    setOrClearFlag(N, Y & (1 << 7));
     return 0;
 }
 
