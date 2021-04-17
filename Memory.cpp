@@ -4,7 +4,7 @@
 #define END_ADDRESS 0xFFFF
 
 Memory::Memory(){
-    for(auto &i : ram) {
+    for(auto &i : this->ram) {
         i = 0x00;
     }
 }
@@ -16,19 +16,25 @@ Memory::~Memory(){
 //Rather use operator
 void Memory::write(u16 addr, u8 data){
     if(isAddrInRange(addr)){
-        this->ram[addr] = data;
+        (this->ram)[addr] = data;
     }
 }
 
-//Rather use operator
-Byte Memory::read(u16 addr){
+u8 Memory::operator[](u16 addr) const{
     if(isAddrInRange(addr)){
-        return this->ram[addr];
+        return (this->ram)[addr];
     }
     return 0x00;
 }
 
-bool Memory::isAddrInRange(u16 addr){
+//u8 & Memory::operator[](u16 addr){
+//    if(isAddrInRange(addr)){
+//        return (this->ram)[addr];
+//    }
+//    return (this->ram)[START_ADDRESS];
+//}
+
+bool Memory::isAddrInRange(const u16 addr)const{
     return addr >= START_ADDRESS && addr <= END_ADDRESS;
 }
 

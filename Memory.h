@@ -16,12 +16,12 @@ public:
     Memory();
     ~Memory();
     void write(u16 addr, u8 data);
-    u8 read(u16 addr);
+    u8 operator[](u16 addr)const;
+    //u8 & operator[](u16 addr);
 private:
     static constexpr uint32_t MAX_MEM = NUM_BYTES_IN_KB * NUMBER_OF_KB;
-    //Byte Data[MAX_MEM];
     std::array<Byte, MAX_MEM> ram;
-    bool isAddrInRange(u16 addr);
+    bool isAddrInRange(const u16 addr)const;
 };
 
 #endif //MEMORY_H
