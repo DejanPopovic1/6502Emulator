@@ -1,6 +1,7 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
+#include "instructions.h"
 #include <cstdint>
 #include <vector>
 #include <string>
@@ -14,14 +15,9 @@
 #define BIT_SIX     (1 << 6)
 #define BIT_SEVEN   (1 << 7)
 
-class Memory;
-class Processor;
 
-struct Instruction{
-    uint8_t(Processor::*operate)() = nullptr;
-    uint8_t(Processor::*addrmode)() = nullptr;
-    uint8_t cycles = 0;
-};
+class Memory;
+struct Instruction;
 
 using u8 = uint8_t;
 using u16 = uint16_t;
