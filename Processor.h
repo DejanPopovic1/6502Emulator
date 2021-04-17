@@ -5,14 +5,14 @@
 #include <vector>
 #include <string>
 
-#define BIT_ZERO (1 << 0)
-#define BIT_ONE (1 << 1)
-#define BIT_TWO (1 << 2)
-#define BIT_THREE (1 << 3)
-#define BIT_FOUR (1 << 4)
-#define BIT_FIVE (1 << 5)
-#define BIT_SIX (1 << 6)
-#define BIT_SEVEN (1 << 7)
+#define BIT_ZERO    (1 << 0)
+#define BIT_ONE     (1 << 1)
+#define BIT_TWO     (1 << 2)
+#define BIT_THREE   (1 << 3)
+#define BIT_FOUR    (1 << 4)
+#define BIT_FIVE    (1 << 5)
+#define BIT_SIX     (1 << 6)
+#define BIT_SEVEN   (1 << 7)
 
 using u8 = uint8_t;
 using u16 = uint16_t;
@@ -22,13 +22,10 @@ class Memory;
 class Processor{
 
 public:
-    //Macro each of the numbers because they are sometimes used by themselves
     enum flagsRegister{C = BIT_ZERO, Z = BIT_ONE, I = BIT_TWO, D = BIT_THREE, B = BIT_FOUR, U = BIT_FIVE, V = BIT_SIX, N = BIT_SEVEN};
     Processor();
     ~Processor();
     void connectMemory(Memory *mem);
-    //Addressing Modes
-    //Rename these in more logical fashion according to the Rockwell data sheet
     u8 IMP();
     u8 IMM();
     u8 ABS();
@@ -41,8 +38,6 @@ public:
     u8 IIX();
     u8 IIY();
     u8 IND();
-
-    //OpCodes
     //Add descriptions of these in the file with a special escape character
     //Rather store these in a seperate file so that when function pointers point to them, we dont use class function pointers
     //Load/Store Operations | Register Transfers | Stack Operations | Logical        | Arithmetic     | Increments & Decrements | Shifts         | Jumps & Calls  | Branches       | Status Flag Changes | System Functions

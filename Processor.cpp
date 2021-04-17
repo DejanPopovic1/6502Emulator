@@ -1,6 +1,8 @@
 #include "Processor.h"
 #include "Memory.h"
 
+//Macro Bit access
+
 //Derive from an abstract class to derive the 6502 processor class
 //There are too many internal class variables. Following program and function execution is therefore very difficult.
 //Rather pass around variables between the functions and cut down on the class variables
@@ -150,7 +152,7 @@ void Processor::setOrClearFlag(enum flagsRegister, bool isSet){
         setFlag(Processor::flagsRegister);
     }
     else if(!isSet) {
-        clearFlag(flagsRegister);
+        clearFlag(Processor::flagsRegister);
     }
 }
 
