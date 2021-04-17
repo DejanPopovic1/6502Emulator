@@ -90,11 +90,10 @@ void Processor::connectMemory(Memory *m){
 
 uint8_t Processor::read(uint16_t a){
     return (*mem)[a];
-
 }
 
-void Processor::write(uint16_t addressSpace, uint8_t b){
-    this->mem->write(addressSpace, b);
+void Processor::write(uint16_t a, uint8_t b){
+    (*mem)[a] = b;
 }
 
 //Next two functions. Clock calls the instruction and the instruction calls fetch

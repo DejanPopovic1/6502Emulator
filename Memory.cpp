@@ -13,13 +13,6 @@ Memory::~Memory(){
 
 }
 
-//Rather use operator
-void Memory::write(u16 addr, u8 data){
-    if(isAddrInRange(addr)){
-        (this->ram)[addr] = data;
-    }
-}
-
 u8 Memory::operator[](u16 addr) const{
     if(isAddrInRange(addr)){
         return (this->ram)[addr];
@@ -27,12 +20,12 @@ u8 Memory::operator[](u16 addr) const{
     return 0x00;
 }
 
-//u8 & Memory::operator[](u16 addr){
-//    if(isAddrInRange(addr)){
-//        return (this->ram)[addr];
-//    }
-//    return (this->ram)[START_ADDRESS];
-//}
+u8 & Memory::operator[](u16 addr){
+    if(isAddrInRange(addr)){
+        return (this->ram)[addr];
+    }
+    return (this->ram)[START_ADDRESS];
+}
 
 bool Memory::isAddrInRange(const u16 addr)const{
     return addr >= START_ADDRESS && addr <= END_ADDRESS;
