@@ -89,7 +89,7 @@ void Processor::connectMemory(Memory *m){
 }
 
 uint8_t Processor::read(uint16_t a){
-    return this->mem->read(a, false);
+    return this->mem->read(a);
 }
 
 void Processor::write(uint16_t addressSpace, uint8_t b){

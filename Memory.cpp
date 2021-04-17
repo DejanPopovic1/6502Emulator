@@ -1,5 +1,8 @@
 #include "Memory.h"
 
+#define START_ADDRESS 0x0000
+#define END_ADDRESS 0xFFFF
+
 Memory::Memory(){
     for(auto &i : ram) {
         i = 0x00;
@@ -11,18 +14,22 @@ Memory::~Memory(){
 }
 
 //Rather use operator
-void Memory::write(Word addr, Byte data){
-    if(addr >= 0x0000 && addr <= 0xFFFF){
+void Memory::write(u16 addr, u8 data){
+    if(isAddrInRange(addr)){
         this->ram[addr] = data;
     }
 }
 
 //Rather use operator
-Byte Memory::read(Word addr, bool bReadOnly){
-    if(addr >= 0x0000 && addr <= 0xFFFF){
+Byte Memory::read(u16 addr){
+    if(isAddrInRange(addr)){
         return this->ram[addr];
     }
     return 0x00;
+}
+
+bool Memory::isAddrInRange(u16 addr){
+    return addr >= START_ADDRESS && addr <= END_ADDRESS;
 }
 
 
