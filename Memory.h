@@ -19,7 +19,7 @@ public:
     u8 & operator[](u16 addr);
 private:
     static constexpr uint32_t MAX_MEM = NUM_BYTES_IN_KB * NUMBER_OF_KB;
-    std::array<Byte, MAX_MEM> ram;
+    std::array<u8, MAX_MEM> ram;
     bool isAddrInRange(const u16 addr)const;
 };
 
