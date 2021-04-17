@@ -22,7 +22,7 @@ class Memory;
 class Processor{
 
 public:
-    enum flagsRegister{C = BIT_ZERO, Z = BIT_ONE, I = BIT_TWO, D = BIT_THREE, B = BIT_FOUR, U = BIT_FIVE, V = BIT_SIX, N = BIT_SEVEN};
+    enum validFlagBits{C = BIT_ZERO, Z = BIT_ONE, I = BIT_TWO, D = BIT_THREE, B = BIT_FOUR, U = BIT_FIVE, V = BIT_SIX, N = BIT_SEVEN};
     Processor();
     ~Processor();
     void connectMemory(Memory *mem);
@@ -72,10 +72,9 @@ private:
     u8 A, X, Y;
     u8 SP;
     u16 PC;
-    flagsRegister flagsRegister;
-    u8 getFlag(enum flagsRegister);
-    void setFlag(enum flagsRegister);
-    void clearFlag(enum flagsRegister);
+    u8 getFlag(enum validFlagBits);
+    void setFlag(enum validFlagBits);
+    void clearFlag(enum validFlagBits);
     //For this whole class, instead of class definition initialisation rather intialise as part of the constructor
     struct Instruction{
         std::string name;
@@ -84,7 +83,7 @@ private:
         uint8_t cycles = 0;
     };
     std::vector<Instruction> lookup;
-    void setOrClearFlag(enum Processor::flagsRegister f, bool isSet);
+    void setOrClearFlag(enum Processor::validFlagBits f, bool isSet);
 };
 
 

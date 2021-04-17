@@ -147,24 +147,24 @@ void Processor::reset(){
 
 }
 
-void Processor::setOrClearFlag(enum flagsRegister, bool isSet){
+void Processor::setOrClearFlag(enum validFlagBits b, bool isSet){
     if(isSet){
-        setFlag(Processor::flagsRegister);
+        setFlag(b);
     }
     else if(!isSet) {
-        clearFlag(Processor::flagsRegister);
+        clearFlag(b);
     }
 }
 
-void Processor::setFlag(enum flagsRegister f){
-    status |= f;
+void Processor::setFlag(enum validFlagBits b){
+    status |= b;
 }
 
-void Processor::clearFlag(enum flagsRegister f){
-    status &= ~f;
+void Processor::clearFlag(enum validFlagBits b){
+    status &= ~b;
 }
 
-u8 Processor::getFlag(enum flagsRegister f){
+u8 Processor::getFlag(enum validFlagBits f){
     u8 test = (status & f);
     if(test > 0){
         return 1;
