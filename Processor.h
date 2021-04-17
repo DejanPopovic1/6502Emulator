@@ -30,17 +30,18 @@ public:
     //Addressing Modes
     //Rename these in more logical fashion according to the Rockwell data sheet
     u8 IMP();
-    u8 ZP0();
-    u8 ZPY();
-    u8 ABS();
-    u8 ABY();
-    u8 IZX();
     u8 IMM();
+    u8 ABS();
+    u8 ZPA();
     u8 ZPX();
-    u8 REL();
+    u8 ZPY();
     u8 ABX();
+    u8 ABY();
+    u8 REL();
+    u8 IIX();
+    u8 IIY();
     u8 IND();
-    u8 IZY();
+
     //OpCodes
     //Add descriptions of these in the file with a special escape character
     //Rather store these in a seperate file so that when function pointers point to them, we dont use class function pointers
