@@ -26,6 +26,7 @@ public:
     Processor();
     ~Processor();
     void connectMemory(Memory *mem);
+    //Addressing Modes
     u8 IMP();
     u8 IMM();
     u8 ABS();
@@ -38,37 +39,92 @@ public:
     u8 IIX();
     u8 IIY();
     u8 IND();
-    //Add descriptions of these in the file with a special escape character
-    //Rather store these in a seperate file so that when function pointers point to them, we dont use class function pointers
-    //Load/Store Operations | Register Transfers | Stack Operations | Logical        | Arithmetic     | Increments & Decrements | Shifts         | Jumps & Calls  | Branches       | Status Flag Changes | System Functions
-    u8 LDA();            u8 TAX();       u8 TSX();     u8 AND();   u8 ADC();   u8 INC();            u8 ASL();   u8 JMP();   u8 BCC();   u8 CLC();        u8 BRK();
-    u8 LDX();            u8 TAY();       u8 TXS();     u8 EOR();   u8 SBC();   u8 INX();            u8 LSR();   u8 JSR();   u8 BCS();   u8 CLD();        u8 NOP();
-    u8 LDY();            u8 TXA();       u8 PHA();     u8 ORA();   u8 CMP();   u8 INY();            u8 ROL();   u8 RTS();   u8 BEQ();   u8 CLI();        u8 RTI();
-    u8 STA();            u8 TYA();       u8 PHP();     u8 BIT();   u8 CPX();   u8 DEC();            u8 ROR();               u8 BMI();   u8 CLV();
-    u8 STX();                            u8 PLA();                 u8 CPY();   u8 DEX();                                    u8 BNE();   u8 SEC();
-    u8 STY();                            u8 PLP();                             u8 DEY();                                    u8 BPL();   u8 SED();
-    u8 BVC();                            u8 SEI();
+    //Instructions
+    //Load
+    u8 LDA();
+    u8 LDX();
+    u8 LDY();
+    u8 STA();
+    u8 STX();
+    u8 STY();
+    //Register Transfers
+    u8 TAX();
+    u8 TAY();
+    u8 TXA();
+    u8 TYA();
+    //Stack
+    u8 TSX();
+    u8 TXS();
+    u8 PHA();
+    u8 PHP();
+    u8 PLA();
+    u8 PLP();
+    //Logical
+    u8 AND();
+    u8 EOR();
+    u8 ORA();
+    u8 BIT();
+    //Arithmetic
+    u8 ADC();
+    u8 SBC();
+    u8 CMP();
+    u8 CPX();
+    u8 CPY();
+    //IncDecrements
+    u8 INC();
+    u8 INX();
+    u8 INY();
+    u8 DEC();
+    u8 DEX();
+    u8 DEY();
+    //Shifts
+    u8 ASL();
+    u8 LSR();
+    u8 ROL();
+    u8 ROR();
+    //JumpCalls
+    u8 JMP();
+    u8 JSR();
+    u8 RTS();
+    //Branches
+    u8 BCC();
+    u8 BCS();
+    u8 BEQ();
+    u8 BMI();
+    u8 BNE();
+    u8 BPL();
+    u8 BVC();
     u8 BVS();
+    //StatusChange
+    u8 CLC();
+    u8 CLD();
+    u8 CLI();
+    u8 CLV();
+    u8 SEC();
+    u8 SED();
+    u8 SEI();
+    //SysFunctions
+    u8 BRK();
+    u8 NOP();
+    u8 RTI();
+    //Invalid
     u8 XXX();
+    //
     void clock();
     void reset();
     void irq();
     void nmi();
     u8 fetch();
-    u8 fetched = 0x00;
-    u16 addr_abs = 0x0000;
-    u16 addr_rel = 0x00;//Check if this can be defined as a Byte instead
-    u8 opcode = 0;
-    u8 cycles = 0;
-    //If the internal inhibit(I am assuming that this is the IRQ Disable flag) is set, then the interrupt is ignored.
-    u8 status = 0x00;
-
+    u8 fetched;
+    u16 addr_abs;
+    u16 addr_rel;//Check if this can be defined as a Byte instead
+    u8 opcode;
+    u8 cycles;
+    u8 status;
 private:
     Memory *mem = nullptr;
     u8 read(u16 a);
     void write(u16 a, u8 d);
-    //The upper significant 8 bits are hardcoded to 1. i.e. SP value is always 0000001xxxxxxxx
-    //The range of the SP is from
     u8 A, X, Y;
     u8 SP;
     u16 PC;
@@ -77,7 +133,6 @@ private:
     void clearFlag(enum validFlagBits);
     //For this whole class, instead of class definition initialisation rather intialise as part of the constructor
     struct Instruction{
-        std::string name;
         uint8_t(Processor::*operate)() = nullptr;
         uint8_t(Processor::*addrmode)() = nullptr;
         uint8_t cycles = 0;
