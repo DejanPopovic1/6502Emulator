@@ -14,10 +14,18 @@
 #define BIT_SIX     (1 << 6)
 #define BIT_SEVEN   (1 << 7)
 
+class Memory;
+class Processor;
+
+struct Instruction{
+    uint8_t(Processor::*operate)() = nullptr;
+    uint8_t(Processor::*addrmode)() = nullptr;
+    uint8_t cycles = 0;
+};
+
 using u8 = uint8_t;
 using u16 = uint16_t;
 
-class Memory;
 
 class Processor{
 
@@ -131,12 +139,8 @@ private:
     void setFlag(enum validFlagBits);
     void clearFlag(enum validFlagBits);
     //For this whole class, instead of class definition initialisation rather intialise as part of the constructor
-    struct Instruction{
-        uint8_t(Processor::*operate)() = nullptr;
-        uint8_t(Processor::*addrmode)() = nullptr;
-        uint8_t cycles = 0;
-    };
-    std::vector<Instruction> lookup;
+    struct Instruction i;
+    std::vector<struct Instruction> lookup;
     void setOrClearFlag(enum Processor::validFlagBits f, bool isSet);
 };
 
