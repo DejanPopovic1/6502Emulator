@@ -16,7 +16,6 @@
 //When adding the dis assembler, it should be in a separate class called disassembler. In any case this should be in backlog
 Processor::Processor(){
     using a = Processor;
-    this->fetched = 0;
     this->addr_abs = 0;
     this->addr_rel = 0;
     this->opcode = 0;
@@ -124,14 +123,13 @@ void Processor::clock(){
     cycles--;
 }
 
+//Return the fetched value and use this rather than relying on internal values
 //Fetch returns a value we hardly ever use. It rather changes internal class variables. Should it therefore not be redesigned? (it also adds to confusion and code tracing)
 u8 Processor::fetch(){
     if(!(lookup[opcode].addrmode == &Processor::IMP)){
-        fetched = read(addr_abs);
+        return read(addr_abs);
     }
-    return this->fetched;
-
-
+    return this->A;
 }
 
 //Refactor into read u8
@@ -147,7 +145,6 @@ void Processor::reset(){
     PC = (high << 8) | low;
     addr_rel = 0x0000;
     addr_abs = 0x0000;
-    fetched = 0x00;
 
     cycles = 8;
 
@@ -184,7 +181,6 @@ u8 Processor::getFlag(enum validFlagBits f){
 
 //Implied still "fetches" the operand, albeit not from memory. Its in the accumulator.
 u8 Processor::IMP(){
-    this->fetched = this->A;
     return 0;
 }
 
@@ -319,7 +315,7 @@ u8 Processor::IIY(){
 //====================
 
 u8 Processor::ADC(){
-    fetch();
+    u8 fetched = fetch();
     u16 temp = (u16)A + (u16)fetched + (u16)getFlag(C);
     setOrClearFlag(C, temp > 255);
     setOrClearFlag(Z, (temp & 0x00FF) == 0);
@@ -332,7 +328,7 @@ u8 Processor::ADC(){
 
 
 u8 Processor::SBC(){
-    fetch();
+    u8 fetched = fetch();
     u16 value = ((u16)fetched) ^ 0x00FF;
     u16 temp = (u16)A + value + (u16)getFlag(C);
     setOrClearFlag(C, temp & 0xFF00);
@@ -344,8 +340,8 @@ u8 Processor::SBC(){
 }
 
 u8 Processor::AND(){
-    fetch();
-    this->A = this->A & this->fetched;
+    u8 fetched = fetch();
+    this->A = this->A & fetched;
     setOrClearFlag(Z, A == 0x00);
     setOrClearFlag(N, A & 0x80);
     return 1;
@@ -353,7 +349,7 @@ u8 Processor::AND(){
 
 
 u8 Processor::ASL(){
-    fetch();//If its implied addressing mode, it wont update any internal variables. One of the addressing modes is implied.
+    u8 fetched = fetch();//If its implied addressing mode, it wont update any internal variables. One of the addressing modes is implied.
     setOrClearFlag(C, fetched & 0x80);
     setOrClearFlag(Z, !(fetched << 1));
     setOrClearFlag(N, (fetched << 1) & 0x80);
@@ -407,7 +403,7 @@ u8 Processor::BEQ(){
 }
 
 u8 Processor::BIT(){
-    fetch();
+    u8 fetched = fetch();
     setOrClearFlag(Z, !fetched & A);
     setOrClearFlag(V, fetched & 0x40);//Sixth bit. Add macro's. Rather use 1 << 6 as the macro
     setOrClearFlag(N, fetched & 0x80);//Seventh bit. Add macro's. Rather use 1 << 7 as the macro
@@ -474,7 +470,7 @@ u8 Processor::BPL(){
 //See https://en.wikipedia.org/wiki/Interrupts_in_65xx_processors
 
 u8 Processor::BRK(){
-    fetch();//The only mode for BRK is implied and therefore this statement could be ignored.
+    u8 fetched = fetch();
     PC++;
 
     write(0x0100 + SP, PC >> 8);//The second argument gets converted to a u8 & therefore no reason to narrow the passed argument
@@ -551,7 +547,7 @@ u8 Processor::CLV(){
 }
 
 u8 Processor::CMP(){
-    fetch();
+    u8 fetched = fetch();
     setOrClearFlag(C, A >= fetched);
     setOrClearFlag(Z, A == fetched);
     setOrClearFlag(N, (A - fetched) & (1 << 7));//MACRO this. Also be consistent with 1 << 7 and using 0x0080
@@ -559,7 +555,7 @@ u8 Processor::CMP(){
 }
 
 u8 Processor::CPX(){
-    fetch();
+    u8 fetched = fetch();
     setOrClearFlag(C, X >= fetched);
     setOrClearFlag(Z, X == fetched);
     setOrClearFlag(N, (X - fetched) & (1 << 7));//MACRO this. Also be consistent with 1 << 7 and using 0x0080
@@ -567,7 +563,7 @@ u8 Processor::CPX(){
 }
 
 u8 Processor::CPY(){
-    fetch();
+    u8 fetched = fetch();
     setOrClearFlag(C, Y >= fetched);
     setOrClearFlag(Z, Y == fetched);
     setOrClearFlag(N, (Y - fetched) & (1 << 7));//MACRO this. Also be consistent with 1 << 7 and using 0x0080
@@ -575,7 +571,7 @@ u8 Processor::CPY(){
 }
 
 u8 Processor::DEC(){
-    fetch();
+    u8 fetched = fetch();
     fetched--;
     write(addr_abs, fetched);
     setOrClearFlag(Z, !fetched);
@@ -598,7 +594,7 @@ u8 Processor::DEY(){
 }
 
 u8 Processor::EOR(){
-    fetch();
+    u8 fetched = fetch();
     A ^= fetched;
     setOrClearFlag(Z, !A);
     setOrClearFlag(N, A & (1 << 7));
@@ -606,7 +602,7 @@ u8 Processor::EOR(){
 }
 
 u8 Processor::INC(){
-    fetch();
+    u8 fetched = fetch();
     fetched++;
     write(addr_abs, fetched);
     setOrClearFlag(Z, !fetched);
@@ -644,7 +640,7 @@ u8 Processor::JSR(){
 }
 
 u8 Processor::LDA(){
-    fetch();
+    u8 fetched = fetch();
     A = fetched;
     setOrClearFlag(Z, A == 0);
     setOrClearFlag(N, A & (1 << 7));
@@ -652,7 +648,7 @@ u8 Processor::LDA(){
 }
 
 u8 Processor::LDX(){
-    fetch();
+    u8 fetched = fetch();
     X = fetched;
     setOrClearFlag(Z, X == 0);
     setOrClearFlag(N, X & (1 << 7));
@@ -660,7 +656,7 @@ u8 Processor::LDX(){
 }
 
 u8 Processor::LDY(){
-    fetch();
+    u8 fetched = fetch();
     Y = fetched;
     setOrClearFlag(Z, Y == 0);
     setOrClearFlag(N, Y & (1 << 7));
@@ -668,7 +664,7 @@ u8 Processor::LDY(){
 }
 
 u8 Processor::LSR(){
-    fetch();
+    u8 fetched = fetch();
     u16 originalFetched = fetched;
     fetched = fetched >> 1;
     fetched &= 0x7F;
@@ -689,7 +685,7 @@ u8 Processor::NOP(){
 }
 
 u8 Processor::ORA(){
-    fetch();
+    u8 fetched = fetch();
     A |= fetched;
     setOrClearFlag(Z, A == 0);
     setOrClearFlag(N, A & (1 << 7));
@@ -743,7 +739,7 @@ u8 Processor::PLP(){
 }
 
 u8 Processor::ROL(){
-    fetch();
+    u8 fetched = fetch();
     u8 newCarryFlagValue = fetched & (1 << 7);
     u8 result = (fetched << 1) | getFlag(C);
     setOrClearFlag(C, newCarryFlagValue);
@@ -760,7 +756,7 @@ u8 Processor::ROL(){
 }
 
 u8 Processor::ROR(){
-    fetch();
+    u8 fetched = fetch();
     u8 newCarryFlagValue = fetched & (1 << 0);
     u8 result = (fetched >> 1) & ~(1 << 7);//Force the 7th(leading) bit to be zero
     result |= (getFlag(C) << 7);
