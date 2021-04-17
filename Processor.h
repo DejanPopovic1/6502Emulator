@@ -1,7 +1,3 @@
-//
-// Created by DejanP on 2021/04/09.
-//
-
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
@@ -13,6 +9,9 @@ using Byte = uint8_t;
 using Word = uint16_t;
 using u32 = uint32_t;
 using s32 = int32_t;
+
+using u8 = uint8_t;
+using u16 = uint16_t;
 
 class Memory;
 

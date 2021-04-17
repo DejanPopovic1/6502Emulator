@@ -1,6 +1,3 @@
-//
-// Created by DejanP on 2021/04/10.
-//
 #include "Processor.h"
 #include "Memory.h"
 
