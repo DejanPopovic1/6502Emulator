@@ -126,6 +126,10 @@ void Processor::write(u16 a, u8 b){
 
 //Next two functions. Clock calls the instruction and the instruction calls fetch
 
+
+// TODO adjust addressing functions to alter the passed paramters
+// TODO save the adjusted paramters as separate variables in clock()
+// TODO remove class variables PC addr_abs and addr_rel
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //Understand this in more detail
 //Use AND() as an example to run through this
