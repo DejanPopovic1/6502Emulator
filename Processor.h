@@ -44,35 +44,35 @@ public:
     u8 IIY(u16 &PC, u16 &addr_abs, u16 &addr_rel);
     u8 IND(u16 &PC, u16 &addr_abs, u16 &addr_rel);
     //Load
-    u8 LDA(); u8 LDX(); u8 LDY(); u8 STA(); u8 STX(); u8 STY();
+    u8 LDA(u16 addr); u8 LDX(u16 addr); u8 LDY(u16 addr); u8 STA(u16 addr); u8 STX(u16 addr); u8 STY(u16 addr);
     //Register Transfers
-    u8 TAX(); u8 TAY(); u8 TXA(); u8 TYA();
+    u8 TAX(u16 addr); u8 TAY(u16 addr); u8 TXA(u16 addr); u8 TYA(u16 addr);
     //Stack
-    u8 TSX(); u8 TXS(); u8 PHA(); u8 PHP(); u8 PLA(); u8 PLP();
+    u8 TSX(u16 addr); u8 TXS(u16 addr); u8 PHA(u16 addr); u8 PHP(u16 addr); u8 PLA(u16 addr); u8 PLP(u16 addr);
     //Logical
-    u8 AND(); u8 EOR(); u8 ORA(); u8 BIT();
+    u8 AND(u16 addr); u8 EOR(u16 addr); u8 ORA(u16 addr); u8 BIT(u16 addr);
     //Arithmetic
-    u8 ADC(); u8 SBC(); u8 CMP(); u8 CPX(); u8 CPY();
+    u8 ADC(u16 addr); u8 SBC(u16 addr); u8 CMP(u16 addr); u8 CPX(u16 addr); u8 CPY(u16 addr);
     //IncDecrements
-    u8 INC(); u8 INX(); u8 INY(); u8 DEC(); u8 DEX(); u8 DEY();
+    u8 INC(u16 addr); u8 INX(u16 addr); u8 INY(u16 addr); u8 DEC(u16 addr); u8 DEX(u16 addr); u8 DEY(u16 addr);
     //Shifts
-    u8 ASL(); u8 LSR(); u8 ROL(); u8 ROR();
+    u8 ASL(u16 addr); u8 LSR(u16 addr); u8 ROL(u16 addr); u8 ROR(u16 addr);
     //JumpCalls
-    u8 JMP(); u8 JSR(); u8 RTS();
+    u8 JMP(u16 addr); u8 JSR(u16 addr); u8 RTS(u16 addr);
     //Branches
-    u8 BCC(); u8 BCS(); u8 BEQ(); u8 BMI(); u8 BNE(); u8 BPL(); u8 BVC(); u8 BVS();
+    u8 BCC(u16 addr); u8 BCS(u16 addr); u8 BEQ(u16 addr); u8 BMI(u16 addr); u8 BNE(u16 addr); u8 BPL(u16 addr); u8 BVC(u16 addr); u8 BVS(u16 addr);
     //StatusChange
-    u8 CLC(); u8 CLD(); u8 CLI(); u8 CLV(); u8 SEC(); u8 SED(); u8 SEI();
+    u8 CLC(u16 addr); u8 CLD(u16 addr); u8 CLI(u16 addr); u8 CLV(u16 addr); u8 SEC(u16 addr); u8 SED(u16 addr); u8 SEI(u16 addr);
     //SysFunctions
-    u8 BRK(); u8 NOP(); u8 RTI();
+    u8 BRK(u16 addr); u8 NOP(u16 addr); u8 RTI(u16 addr);
     //Invalid
-    u8 XXX();
+    u8 XXX(u16 addr);
     //
     void clock();
     void reset();
     void irq();
     void nmi();
-    u8 fetch();
+    u8 fetch(uint16_t addr_abs);
     //u16 addr_abs;
     //u16 addr_rel;//Check if this can be defined as a Byte instead
     u8 opcode;
