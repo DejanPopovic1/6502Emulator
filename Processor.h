@@ -44,29 +44,29 @@ public:
     u8 IIY(u16 &PC, u16 &addr_abs, u16 &addr_rel);
     u8 IND(u16 &PC, u16 &addr_abs, u16 &addr_rel);
     //Load
-    u8 LDA(u16 addr); u8 LDX(u16 addr); u8 LDY(u16 addr); u8 STA(u16 addr); u8 STX(u16 addr); u8 STY(u16 addr);
+    u8 LDA(u16 addr_abs, u16 addr_rel); u8 LDX(u16 addr_abs, u16 addr_rel); u8 LDY(u16 addr_abs, u16 addr_rel); u8 STA(u16 addr_abs, u16 addr_rel); u8 STX(u16 addr_abs, u16 addr_rel); u8 STY(u16 addr_abs, u16 addr_rel);
     //Register Transfers
-    u8 TAX(u16 addr); u8 TAY(u16 addr); u8 TXA(u16 addr); u8 TYA(u16 addr);
+    u8 TAX(u16 addr_abs, u16 addr_rel); u8 TAY(u16 addr_abs, u16 addr_rel); u8 TXA(u16 addr_abs, u16 addr_rel); u8 TYA(u16 addr_abs, u16 addr_rel);
     //Stack
-    u8 TSX(u16 addr); u8 TXS(u16 addr); u8 PHA(u16 addr); u8 PHP(u16 addr); u8 PLA(u16 addr); u8 PLP(u16 addr);
+    u8 TSX(u16 addr_abs, u16 addr_rel); u8 TXS(u16 addr_abs, u16 addr_rel); u8 PHA(u16 addr_abs, u16 addr_rel); u8 PHP(u16 addr_abs, u16 addr_rel); u8 PLA(u16 addr_abs, u16 addr_rel); u8 PLP(u16 addr_abs, u16 addr_rel);
     //Logical
-    u8 AND(u16 addr); u8 EOR(u16 addr); u8 ORA(u16 addr); u8 BIT(u16 addr);
+    u8 AND(u16 addr_abs, u16 addr_rel); u8 EOR(u16 addr_abs, u16 addr_rel); u8 ORA(u16 addr_abs, u16 addr_rel); u8 BIT(u16 addr_abs, u16 addr_rel);
     //Arithmetic
-    u8 ADC(u16 addr); u8 SBC(u16 addr); u8 CMP(u16 addr); u8 CPX(u16 addr); u8 CPY(u16 addr);
+    u8 ADC(u16 addr_abs, u16 addr_rel); u8 SBC(u16 addr_abs, u16 addr_rel); u8 CMP(u16 addr_abs, u16 addr_rel); u8 CPX(u16 addr_abs, u16 addr_rel); u8 CPY(u16 addr_abs, u16 addr_rel);
     //IncDecrements
-    u8 INC(u16 addr); u8 INX(u16 addr); u8 INY(u16 addr); u8 DEC(u16 addr); u8 DEX(u16 addr); u8 DEY(u16 addr);
+    u8 INC(u16 addr_abs, u16 addr_rel); u8 INX(u16 addr_abs, u16 addr_rel); u8 INY(u16 addr_abs, u16 addr_rel); u8 DEC(u16 addr_abs, u16 addr_rel); u8 DEX(u16 addr_abs, u16 addr_rel); u8 DEY(u16 addr_abs, u16 addr_rel);
     //Shifts
-    u8 ASL(u16 addr); u8 LSR(u16 addr); u8 ROL(u16 addr); u8 ROR(u16 addr);
+    u8 ASL(u16 addr_abs, u16 addr_rel); u8 LSR(u16 addr_abs, u16 addr_rel); u8 ROL(u16 addr_abs, u16 addr_rel); u8 ROR(u16 addr_abs, u16 addr_rel);
     //JumpCalls
-    u8 JMP(u16 addr); u8 JSR(u16 addr); u8 RTS(u16 addr);
+    u8 JMP(u16 addr_abs, u16 addr_rel); u8 JSR(u16 addr_abs, u16 addr_rel); u8 RTS(u16 addr_abs, u16 addr_rel);
     //Branches
-    u8 BCC(u16 addr); u8 BCS(u16 addr); u8 BEQ(u16 addr); u8 BMI(u16 addr); u8 BNE(u16 addr); u8 BPL(u16 addr); u8 BVC(u16 addr); u8 BVS(u16 addr);
+    u8 BCC(u16 addr_abs, u16 addr_rel); u8 BCS(u16 addr_abs, u16 addr_rel); u8 BEQ(u16 addr_abs, u16 addr_rel); u8 BMI(u16 addr_abs, u16 addr_rel); u8 BNE(u16 addr_abs, u16 addr_rel); u8 BPL(u16 addr_abs, u16 addr_rel); u8 BVC(u16 addr_abs, u16 addr_rel); u8 BVS(u16 addr_abs, u16 addr_rel);
     //StatusChange
-    u8 CLC(u16 addr); u8 CLD(u16 addr); u8 CLI(u16 addr); u8 CLV(u16 addr); u8 SEC(u16 addr); u8 SED(u16 addr); u8 SEI(u16 addr);
+    u8 CLC(u16 addr_abs, u16 addr_rel); u8 CLD(u16 addr_abs, u16 addr_rel); u8 CLI(u16 addr_abs, u16 addr_rel); u8 CLV(u16 addr_abs, u16 addr_rel); u8 SEC(u16 addr_abs, u16 addr_rel); u8 SED(u16 addr_abs, u16 addr_rel); u8 SEI(u16 addr_abs, u16 addr_rel);
     //SysFunctions
-    u8 BRK(u16 addr); u8 NOP(u16 addr); u8 RTI(u16 addr);
+    u8 BRK(u16 addr_abs, u16 addr_rel); u8 NOP(u16 addr_abs, u16 addr_rel); u8 RTI(u16 addr_abs, u16 addr_rel);
     //Invalid
-    u8 XXX(u16 addr);
+    u8 XXX(u16 addr_abs, u16 addr_rel);
     //
     void clock();
     void reset();
