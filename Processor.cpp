@@ -1,6 +1,8 @@
 #include "Processor.h"
 #include "Memory.h"
 
+#define STACK_BASE_ADDR 0x0100
+
 //Macro Bit access
 
 //If the internal inhibit(I am assuming that this is the IRQ Disable flag) is set, then the interrupt is ignored.
@@ -405,8 +407,8 @@ u8 Processor::BEQ(){
 u8 Processor::BIT(){
     u8 fetched = fetch();
     setOrClearFlag(Z, !fetched & A);
-    setOrClearFlag(V, fetched & 0x40);//Sixth bit. Add macro's. Rather use 1 << 6 as the macro
-    setOrClearFlag(N, fetched & 0x80);//Seventh bit. Add macro's. Rather use 1 << 7 as the macro
+    setOrClearFlag(V, fetched & BIT_SIX);//Sixth bit. Add macro's. Rather use 1 << 6 as the macro
+    setOrClearFlag(N, fetched & BIT_SEVEN);//Seventh bit. Add macro's. Rather use 1 << 7 as the macro
     return 0;
 }
 
@@ -473,9 +475,9 @@ u8 Processor::BRK(){
     u8 fetched = fetch();
     PC++;
 
-    write(0x0100 + SP, PC >> 8);//The second argument gets converted to a u8 & therefore no reason to narrow the passed argument
+    write(STACK_BASE_ADDR + SP, PC >> 8);//The second argument gets converted to a u8 & therefore no reason to narrow the passed argument
     SP--;
-    write(0x0100 + SP, PC);//The second argument gets converted to a u8 & therefore no reason to narrow the passed argument
+    write(STACK_BASE_ADDR + SP, PC);//The second argument gets converted to a u8 & therefore no reason to narrow the passed argument
     SP--;
     //We must disable the interrupt request
     setOrClearFlag(I, true);
@@ -550,7 +552,7 @@ u8 Processor::CMP(){
     u8 fetched = fetch();
     setOrClearFlag(C, A >= fetched);
     setOrClearFlag(Z, A == fetched);
-    setOrClearFlag(N, (A - fetched) & (1 << 7));//MACRO this. Also be consistent with 1 << 7 and using 0x0080
+    setOrClearFlag(N, (A - fetched) & BIT_SEVEN);//MACRO this. Also be consistent with 1 << 7 and using 0x0080
     return 1;
 }
 
@@ -558,7 +560,7 @@ u8 Processor::CPX(){
     u8 fetched = fetch();
     setOrClearFlag(C, X >= fetched);
     setOrClearFlag(Z, X == fetched);
-    setOrClearFlag(N, (X - fetched) & (1 << 7));//MACRO this. Also be consistent with 1 << 7 and using 0x0080
+    setOrClearFlag(N, (X - fetched) & BIT_SEVEN);//MACRO this. Also be consistent with 1 << 7 and using 0x0080
     return 0;
 }
 
@@ -566,7 +568,7 @@ u8 Processor::CPY(){
     u8 fetched = fetch();
     setOrClearFlag(C, Y >= fetched);
     setOrClearFlag(Z, Y == fetched);
-    setOrClearFlag(N, (Y - fetched) & (1 << 7));//MACRO this. Also be consistent with 1 << 7 and using 0x0080
+    setOrClearFlag(N, (Y - fetched) & BIT_SEVEN);//MACRO this. Also be consistent with 1 << 7 and using 0x0080
     return 0;
 }
 
@@ -575,21 +577,21 @@ u8 Processor::DEC(){
     fetched--;
     write(addr_abs, fetched);
     setOrClearFlag(Z, !fetched);
-    setOrClearFlag(N, fetched & (1 << 7));
+    setOrClearFlag(N, fetched & BIT_SEVEN);
     return 0;
 }
 
 u8 Processor::DEX(){
     X--;
     setOrClearFlag(Z, !X);
-    setOrClearFlag(N, X & (1 << 7));
+    setOrClearFlag(N, X & BIT_SEVEN);
     return 0;
 }
 
 u8 Processor::DEY(){
     Y--;
     setOrClearFlag(Z, !Y);
-    setOrClearFlag(N, Y & (1 << 7));
+    setOrClearFlag(N, Y & BIT_SEVEN);
     return 0;
 }
 
@@ -597,7 +599,7 @@ u8 Processor::EOR(){
     u8 fetched = fetch();
     A ^= fetched;
     setOrClearFlag(Z, !A);
-    setOrClearFlag(N, A & (1 << 7));
+    setOrClearFlag(N, A & BIT_SEVEN);
     return 1;
 }
 
@@ -606,21 +608,21 @@ u8 Processor::INC(){
     fetched++;
     write(addr_abs, fetched);
     setOrClearFlag(Z, !fetched);
-    setOrClearFlag(N, fetched & (1 << 7));
+    setOrClearFlag(N, fetched & BIT_SEVEN);
     return 0;
 }
 
 u8 Processor::INX(){
     X++;
     setOrClearFlag(Z, !X);
-    setOrClearFlag(N, X & (1 << 7));
+    setOrClearFlag(N, X & BIT_SEVEN);
     return 0;
 }
 
 u8 Processor::INY(){
     Y++;
     setOrClearFlag(Z, !Y);
-    setOrClearFlag(N, Y & (1 << 7));
+    setOrClearFlag(N, Y & BIT_SEVEN);
     return 0;
 }
 
@@ -631,9 +633,9 @@ u8 Processor::JMP(){
 
 u8 Processor::JSR(){
     u16 addressToBePushed = PC - 1;
-    write(0x0100 + SP, addressToBePushed >> 8);//If this is an error, then try (addressToBePushed >> 8) & 0x00FF
+    write(STACK_BASE_ADDR + SP, addressToBePushed >> 8);//If this is an error, then try (addressToBePushed >> 8) & 0x00FF
     SP--;
-    write(0x0100 + SP, addressToBePushed);//If this is an error, then try (addressToBePushed) & 0x00FF
+    write(STACK_BASE_ADDR + SP, addressToBePushed);//If this is an error, then try (addressToBePushed) & 0x00FF
     SP--;
     PC = addr_abs;
     return 0;
@@ -643,7 +645,7 @@ u8 Processor::LDA(){
     u8 fetched = fetch();
     A = fetched;
     setOrClearFlag(Z, A == 0);
-    setOrClearFlag(N, A & (1 << 7));
+    setOrClearFlag(N, A & BIT_SEVEN);
     return 1;
 }
 
@@ -651,7 +653,7 @@ u8 Processor::LDX(){
     u8 fetched = fetch();
     X = fetched;
     setOrClearFlag(Z, X == 0);
-    setOrClearFlag(N, X & (1 << 7));
+    setOrClearFlag(N, X & BIT_SEVEN);
     return 1;
 }
 
@@ -659,7 +661,7 @@ u8 Processor::LDY(){
     u8 fetched = fetch();
     Y = fetched;
     setOrClearFlag(Z, Y == 0);
-    setOrClearFlag(N, Y & (1 << 7));
+    setOrClearFlag(N, Y & BIT_SEVEN);
     return 1;
 }
 
@@ -668,9 +670,9 @@ u8 Processor::LSR(){
     u16 originalFetched = fetched;
     fetched = fetched >> 1;
     fetched &= 0x7F;
-    setOrClearFlag(C, originalFetched & 0x01);
+    setOrClearFlag(C, originalFetched & BIT_ONE);
     setOrClearFlag(Z, fetched == 0);
-    setOrClearFlag(N, fetched & (1 << 7));
+    setOrClearFlag(N, fetched & BIT_SEVEN);
     if(lookup[opcode].addrmode == & Processor::IMM){
         A = fetched;
     }
@@ -688,7 +690,7 @@ u8 Processor::ORA(){
     u8 fetched = fetch();
     A |= fetched;
     setOrClearFlag(Z, A == 0);
-    setOrClearFlag(N, A & (1 << 7));
+    setOrClearFlag(N, A & BIT_SEVEN);
     return 1;
 }
 
@@ -696,7 +698,7 @@ u8 Processor::ORA(){
 //Add a MACRO for this so that it explains it
 //The stack pointer grows downwards and therefore everytime we push onto it, we decrement
 u8 Processor::PHA(){
-    write(0x0100 + SP, A);
+    write(STACK_BASE_ADDR + SP, A);
     SP--;
     return 0;
 }
@@ -714,8 +716,8 @@ u8 Processor::PHA(){
 //
 u8 Processor::PHP(){
     u8 temp = status;
-    temp |= (1 << 4);
-    temp |= (1 << 5);
+    temp |= BIT_FOUR;
+    temp |= BIT_FIVE;
     write(0x0100 + SP, temp);
     SP--;
     return 0;
@@ -725,26 +727,26 @@ u8 Processor::PHP(){
 //Macro the value 0x80
 u8 Processor::PLA(){
     SP++;
-    A = read(0x0100 + SP);
+    A = read(STACK_BASE_ADDR + SP);
     setOrClearFlag(Z, A == 0x00);
-    setOrClearFlag(N, A & 0x80);
+    setOrClearFlag(N, A & BIT_SEVEN);
     return 0;
 }
 
 //Just check because the unused register U might be set to 1. Check David Barr and NES forums
 u8 Processor::PLP(){
     SP++;
-    status = read(0x0100 + SP);
+    status = read(STACK_BASE_ADDR + SP);
     return 0;
 }
 
 u8 Processor::ROL(){
     u8 fetched = fetch();
-    u8 newCarryFlagValue = fetched & (1 << 7);
+    u8 newCarryFlagValue = fetched & (BIT_SEVEN);
     u8 result = (fetched << 1) | getFlag(C);
     setOrClearFlag(C, newCarryFlagValue);
     setOrClearFlag(Z, A == 0);
-    setOrClearFlag(N, result & (1 << 7));
+    setOrClearFlag(N, result & BIT_SEVEN);
     if(lookup[opcode].addrmode == &Processor::IMP){
         A = result;
     }
@@ -757,12 +759,12 @@ u8 Processor::ROL(){
 
 u8 Processor::ROR(){
     u8 fetched = fetch();
-    u8 newCarryFlagValue = fetched & (1 << 0);
-    u8 result = (fetched >> 1) & ~(1 << 7);//Force the 7th(leading) bit to be zero
+    u8 newCarryFlagValue = fetched & BIT_ZERO;
+    u8 result = (fetched >> 1) & ~BIT_SEVEN;//Force the 7th(leading) bit to be zero
     result |= (getFlag(C) << 7);
     setOrClearFlag(C, newCarryFlagValue);
     setOrClearFlag(Z, A == 0);
-    setOrClearFlag(N, result & (1 << 7));
+    setOrClearFlag(N, result & BIT_SEVEN);
     if(lookup[opcode].addrmode == &Processor::IMP){
         A = result;
     }
@@ -792,19 +794,19 @@ u8 Processor::ROR(){
 //When interrupting, the current status is saved (PC) and the the registers
 u8 Processor::RTI(){
     SP++;
-    status = read(0x0100 + SP);//The status register was the last value pushed on and so its the first value popped off
+    status = read(STACK_BASE_ADDR + SP);//The status register was the last value pushed on and so its the first value popped off
     SP++;
-    PC = (u16)read(0x0100 + SP);
+    PC = (u16)read(STACK_BASE_ADDR + SP);
     SP++;
-    PC |= (u16)read(0x0100 + SP) << 8;
+    PC |= (u16)read(STACK_BASE_ADDR + SP) << 8;
     return 0;
 }
 
 u8 Processor::RTS(){
     SP++;
-    u16 low = read(0x0100 + (SP));
+    u16 low = read(STACK_BASE_ADDR + (SP));
     SP++;
-    u16 high = read(0x0100 + (SP)) << 8;
+    u16 high = read(STACK_BASE_ADDR + (SP)) << 8;
     addr_abs = high | low;
     PC++;
     return 0;
@@ -844,28 +846,28 @@ u8 Processor::STY(){
 u8 Processor::TAX(){
     X = A;
     setOrClearFlag(C, X == 0);
-    setOrClearFlag(N, X & (1 << 7));
+    setOrClearFlag(N, X & BIT_SEVEN);
     return 0;
 }
 
 u8 Processor::TAY(){
     Y = A;
     setOrClearFlag(C, Y == 0);
-    setOrClearFlag(N, Y & (1 << 7));
+    setOrClearFlag(N, Y & BIT_SEVEN);
     return 0;
 }
 
 u8 Processor::TSX(){
     X = SP;
     setOrClearFlag(C, X == 0);
-    setOrClearFlag(N, X & (1 << 7));
+    setOrClearFlag(N, X & BIT_SEVEN);
     return 0;
 }
 
 u8 Processor::TXA(){
     A = X;
     setOrClearFlag(C, A == 0);
-    setOrClearFlag(N, A & (1 << 7));
+    setOrClearFlag(N, A & BIT_SEVEN);
     return 0;
 }
 
@@ -877,7 +879,7 @@ u8 Processor::TXS(){
 u8 Processor::TYA(){
     A = Y;
     setOrClearFlag(C, A == 0);
-    setOrClearFlag(N, A & (1 << 7));
+    setOrClearFlag(N, A & BIT_SEVEN);
     return 0;
 }
 

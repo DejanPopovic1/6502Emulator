@@ -43,74 +43,28 @@ public:
     u8 IIX();
     u8 IIY();
     u8 IND();
-    //Instructions
     //Load
-    u8 LDA();
-    u8 LDX();
-    u8 LDY();
-    u8 STA();
-    u8 STX();
-    u8 STY();
+    u8 LDA(); u8 LDX(); u8 LDY(); u8 STA(); u8 STX(); u8 STY();
     //Register Transfers
-    u8 TAX();
-    u8 TAY();
-    u8 TXA();
-    u8 TYA();
+    u8 TAX(); u8 TAY(); u8 TXA(); u8 TYA();
     //Stack
-    u8 TSX();
-    u8 TXS();
-    u8 PHA();
-    u8 PHP();
-    u8 PLA();
-    u8 PLP();
+    u8 TSX(); u8 TXS(); u8 PHA(); u8 PHP(); u8 PLA(); u8 PLP();
     //Logical
-    u8 AND();
-    u8 EOR();
-    u8 ORA();
-    u8 BIT();
+    u8 AND(); u8 EOR(); u8 ORA(); u8 BIT();
     //Arithmetic
-    u8 ADC();
-    u8 SBC();
-    u8 CMP();
-    u8 CPX();
-    u8 CPY();
+    u8 ADC(); u8 SBC(); u8 CMP(); u8 CPX(); u8 CPY();
     //IncDecrements
-    u8 INC();
-    u8 INX();
-    u8 INY();
-    u8 DEC();
-    u8 DEX();
-    u8 DEY();
+    u8 INC(); u8 INX(); u8 INY(); u8 DEC(); u8 DEX(); u8 DEY();
     //Shifts
-    u8 ASL();
-    u8 LSR();
-    u8 ROL();
-    u8 ROR();
+    u8 ASL(); u8 LSR(); u8 ROL(); u8 ROR();
     //JumpCalls
-    u8 JMP();
-    u8 JSR();
-    u8 RTS();
+    u8 JMP(); u8 JSR(); u8 RTS();
     //Branches
-    u8 BCC();
-    u8 BCS();
-    u8 BEQ();
-    u8 BMI();
-    u8 BNE();
-    u8 BPL();
-    u8 BVC();
-    u8 BVS();
+    u8 BCC(); u8 BCS(); u8 BEQ(); u8 BMI(); u8 BNE(); u8 BPL(); u8 BVC(); u8 BVS();
     //StatusChange
-    u8 CLC();
-    u8 CLD();
-    u8 CLI();
-    u8 CLV();
-    u8 SEC();
-    u8 SED();
-    u8 SEI();
+    u8 CLC(); u8 CLD(); u8 CLI(); u8 CLV(); u8 SEC(); u8 SED(); u8 SEI();
     //SysFunctions
-    u8 BRK();
-    u8 NOP();
-    u8 RTI();
+    u8 BRK(); u8 NOP(); u8 RTI();
     //Invalid
     u8 XXX();
     //
@@ -139,6 +93,5 @@ private:
     std::vector<struct Instruction> lookup;
     void setOrClearFlag(enum Processor::validFlagBits f, bool isSet);
 };
-
 
 #endif //PROCESSOR_H
