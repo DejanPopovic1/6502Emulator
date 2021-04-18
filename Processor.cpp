@@ -130,6 +130,7 @@ void Processor::write(u16 a, u8 b){
 //Understand this in more detail
 //Use AND() as an example to run through this
 //This is the main "runner" of the processor and the function pointer runs the instruction
+//To run the processor call while(true){ProcessorObject.clock()}
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 void Processor::clock(){
     //If cycles == 0, then it means that the next instruction is due, together with its operands.
@@ -138,7 +139,7 @@ void Processor::clock(){
         opcode = read(this->PC);
         this->PC++;
         cycles = lookup[opcode].cycles;
-        u8 additional_cycle1 = (this->*lookup[opcode].addrmode)();//We must fix this. This function addrmode changes the class variable state addr_abs and other variables including PC
+        u8 additional_cycle1 = (this->*lookup[opcode].addrmode)(this->PC, this->addr_abs, this->addr_rel);//We must fix this. This function addrmode changes the class variable state addr_abs and other variables including PC
         //At this point in time, we have fetched the absolute address depending on the address mode above. Only now can we operate on the addr_abs
         u8 additional_cycle2 = (this->*lookup[opcode].operate)();
         cycles += (additional_cycle1 & additional_cycle2);//We must fix this. Using bit operations on this seems like overkill. Add_cycle_1 and add_cycle_2 either returns a 0 or 1. Make this explicit here.
@@ -200,14 +201,15 @@ u8 Processor::getFlag(enum validFlagBits f){
     }
 }
 
+//ADDRESSING MODES
 //The addressing modes all return the absolute address and secondary they tell us if there are any additional instructions required. They do nothing else
 
 //Implied still "fetches" the operand, albeit not from memory. Its in the accumulator.
-u8 Processor::IMP(){
+u8 Processor::IMP(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     return 0;
 }
 
-u8 Processor::ZPA(){
+u8 Processor::ZPA(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     addr_abs = read(PC);
     PC++;
     addr_abs &= 0x00FF;
@@ -215,14 +217,14 @@ u8 Processor::ZPA(){
 }
 
 //Implement wrap around
-u8 Processor::ZPY(){
+u8 Processor::ZPY(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     addr_abs = read(PC) + this->Y;
     PC++;
     addr_abs &= 0x00FF;
     return 0;
 }
 
-u8 Processor::ABS(){
+u8 Processor::ABS(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     u16 lowu8 = read(PC);
     PC++;
     u16 highu8 = read(PC);
@@ -231,7 +233,7 @@ u8 Processor::ABS(){
     return 0;
 }
 
-u8 Processor::ABY(){
+u8 Processor::ABY(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     u16 lowu8 = read(this->PC);
     this->PC++;
     u16 highu8 = read(this->PC);
@@ -248,7 +250,7 @@ u8 Processor::ABY(){
 }
 
 //"Both memory locations specifying the effective address must be in zero page"
-u8 Processor::IIX(){
+u8 Processor::IIX(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     u16 t = read(this->PC);
     this->PC++;
     u16 low = read((u16)(t + (u16)X) & 0x00FF);
@@ -257,13 +259,13 @@ u8 Processor::IIX(){
     return 0;
 }
 
-u8 Processor::IMM(){
+u8 Processor::IMM(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     addr_abs = PC++;
     return 0;
 }
 
 //Must implement a wrap around here!
-u8 Processor::ZPX(){
+u8 Processor::ZPX(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     addr_abs = read(PC) + this->X;
     PC++;
     addr_abs &= 0x00FF;
@@ -275,7 +277,7 @@ u8 Processor::ZPX(){
 //If xxxxxxxx is negative, i.e. if 1xxxxxxx, then:
 //11111111*1*xxxxxxx
 //Else, 00000000*0*xxxxxxx
-u8 Processor::REL(){
+u8 Processor::REL(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     addr_rel = read(PC);
     PC++;
     if(addr_rel & 0x80){
@@ -284,7 +286,7 @@ u8 Processor::REL(){
     return 0;
 }
 
-u8 Processor::ABX(){
+u8 Processor::ABX(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     u16 lowu8 = read(this->PC);
     this->PC++;
     u16 highu8 = read(this->PC);
@@ -300,7 +302,7 @@ u8 Processor::ABX(){
     }
 }
 
-u8 Processor::IND(){
+u8 Processor::IND(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     u16 ptrLow = read(this->PC);
     this->PC++;
     u16 ptrHigh = read(this->PC);
@@ -316,7 +318,7 @@ u8 Processor::IND(){
     return 0;
 }
 
-u8 Processor::IIY(){
+u8 Processor::IIY(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     u16 t = read(this->PC);
     this->PC++;
     u16 low = read(t & 0x00FF);

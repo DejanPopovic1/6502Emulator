@@ -31,18 +31,18 @@ public:
     ~Processor();
     void connectMemory(Memory *mem);
     //Addressing Modes
-    u8 IMP();
-    u8 IMM();
-    u8 ABS();
-    u8 ZPA();
-    u8 ZPX();
-    u8 ZPY();
-    u8 ABX();
-    u8 ABY();
-    u8 REL();
-    u8 IIX();
-    u8 IIY();
-    u8 IND();
+    u8 IMP(u16 &PC, u16 &addr_abs, u16 &addr_rel);
+    u8 IMM(u16 &PC, u16 &addr_abs, u16 &addr_rel);
+    u8 ABS(u16 &PC, u16 &addr_abs, u16 &addr_rel);
+    u8 ZPA(u16 &PC, u16 &addr_abs, u16 &addr_rel);
+    u8 ZPX(u16 &PC, u16 &addr_abs, u16 &addr_rel);
+    u8 ZPY(u16 &PC, u16 &addr_abs, u16 &addr_rel);
+    u8 ABX(u16 &PC, u16 &addr_abs, u16 &addr_rel);
+    u8 ABY(u16 &PC, u16 &addr_abs, u16 &addr_rel);
+    u8 REL(u16 &PC, u16 &addr_abs, u16 &addr_rel);
+    u8 IIX(u16 &PC, u16 &addr_abs, u16 &addr_rel);
+    u8 IIY(u16 &PC, u16 &addr_abs, u16 &addr_rel);
+    u8 IND(u16 &PC, u16 &addr_abs, u16 &addr_rel);
     //Load
     u8 LDA(); u8 LDX(); u8 LDY(); u8 STA(); u8 STX(); u8 STY();
     //Register Transfers
