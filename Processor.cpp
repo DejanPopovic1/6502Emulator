@@ -1,7 +1,27 @@
 #include "Processor.h"
 #include "Memory.h"
 
+//Interrupt Vectors (Two are unused - check why)
 #define STACK_BASE_ADDR 0x0100
+#define IRQBRK_LO_ADDR 0xFFFE
+#define IRQBRK_HI_ADDR 0xFFFF
+#define NMI_LO_ADDR 0xFFFA
+#define NMI_HI_ADDR 0xFFFB
+#define RESET_LO_ADDR 0xFFFC
+#define RESET_HI_ADDR 0xFFFD
+
+
+//Only three hardware interrupts exist:
+//RESET
+//NMI
+//IRQ
+//Note that BRK is a software interrupt
+//Interrupt and its vector in hexadecimal
+//INTERRUPT     LSB         MSB
+//IRQ/BRK       FFFE        FFFF
+//NMI           FFFA        FFFB
+//RESET         FFFC        FFFD
+//See https://en.wikipedia.org/wiki/Interrupts_in_65xx_processors
 
 //Macro Bit access
 
@@ -63,7 +83,7 @@ void Processor::irq(){
         setOrClearFlag(I, 1);
         write(0x0100 + SP, status);
         SP--;
-        addr_abs = 0xFFFE;
+        addr_abs = IRQBRK_LO_ADDR;
         u16 low = read(addr_abs + 0);
         u16 high = read(addr_abs + 1);
         PC = (high << 8) | low;
@@ -74,16 +94,16 @@ void Processor::irq(){
 //Special dedicated purpose address used. Encode into MACRO
 void Processor::nmi(){
     if(!getFlag(I)) {
-        write(0x0100 + SP, (PC >> 8) & 0x00FF);
+        write(STACK_BASE_ADDR + SP, (PC >> 8) & 0x00FF);
         SP--;
-        write(0x0100 + SP, PC & 0x00FF);
+        write(STACK_BASE_ADDR + SP, PC & 0x00FF);
         SP--;
         setOrClearFlag(B, 0);
         setOrClearFlag(U, 1);
         setOrClearFlag(I, 1);
-        write(0x0100 + SP, status);
+        write(STACK_BASE_ADDR + SP, status);
         SP--;
-        addr_abs = 0xFFFA;
+        addr_abs = NMI_LO_ADDR;
         u16 low = read(addr_abs + 0);
         u16 high = read(addr_abs + 1);
         PC = (high << 8) | low;
@@ -141,7 +161,7 @@ void Processor::reset(){
     Y = 0;
     SP = 0xFD;
     status = 0x00;
-    addr_abs = 0xFFFC;
+    addr_abs = RESET_LO_ADDR;
     u16 low = read(addr_abs + 0);
     u16 high = read(addr_abs + 1);
     PC = (high << 8) | low;
@@ -307,8 +327,7 @@ u8 Processor::IIY(){
     }
     else{
         return 0;
-    };
-    return 0;
+    }
 }
 
 
@@ -491,7 +510,7 @@ u8 Processor::BRK(){
     //The interrupt vector is located at FFFE and this should be a macro called INTERRUPT_VECTOR_LOCATION
     //The interrupt vector location will itself house the location of where the PC needs to point to
     //In essence, before calling a break, the location of the break pointer needs to be placed in the interrupt vector at the very end of the memory address space
-    PC = (u16)read(0xFFFE) | ((u16)read(0xFFFF) << 8);
+    PC = (u16)read(IRQBRK_LO_ADDR) | ((u16)read(IRQBRK_HI_ADDR) << 8);
     return 0;
 }
 
