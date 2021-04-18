@@ -3,6 +3,19 @@
 #include "../Memory.h"
 #include "../Processor.h"
 
+#define RESET_LO_ADDR 0xFFFC
+#define RESET_HI_ADDR 0xFFFD
+
+void loadMemory(Memory mem){
+    mem[0x0200] = 0x00;
+    mem[0x0201] = 0x00;
+    mem[0x0202] = 0x00;
+    mem[0x0203] = 0x00;
+    mem[0x0204] = 0x00;
+    mem[0x0205] = 0x00;
+    mem[0x0206] = 0x00;
+    mem[0x0205] = 0x00;
+}
 
 class ProcessorTest : public testing::Test
 {
@@ -10,13 +23,32 @@ public:
     Memory mem;
     Processor cpu;
     virtual void SetUp(){
-        //cpu.reset(mem);
+        mem[RESET_LO_ADDR] = 0x00;
+        mem[RESET_HI_ADDR] = 0x02;
+        cpu.reset();
     }
-
     virtual void TearDown(){
-
     }
 };
+
+TEST_F(ProcessorTest, impliedAddressingUsesNoAdditionalCyclesAndDoesNothingToTheAbsoluteAndRelativeAddress) {
+
+    cpu.IMP(3, 3);
+
+    constexpr s32 NUM_CYCLES = 0;
+    s32 CyclesUsed = cpu.Execute(NUM_CYCLES, mem);
+    EXPECT_EQ(CyclesUsed, 0);
+}
+
+//static void VerifyUnmodifiedFlagsFromDA(CPU cpu, CPU CPUCopy){
+//    EXPECT_EQ(cpu.C, CPUCopy.C);
+//    EXPECT_EQ(cpu.I, CPUCopy.I);
+//    EXPECT_EQ(cpu.D, CPUCopy.D);
+//    EXPECT_EQ(cpu.B, CPUCopy.B);
+//    EXPECT_EQ(cpu.V, CPUCopy.V);
+//}
+
+
 //
 //static void VerifyUnmodifiedFlagsFromDA(CPU cpu, CPU CPUCopy){
 //    EXPECT_EQ(cpu.C, CPUCopy.C);

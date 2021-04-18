@@ -1,5 +1,0 @@
-http://6502.org/tutorials/interrupts.html#2.1
-http://www.obelisk.me.uk/
-https://sta.c64.org/cbm64mem.html
-https://www.masswerk.at/6502/6502_instruction_set.html
-https://wiki.nesdev.com/w/index.php/Status_flags

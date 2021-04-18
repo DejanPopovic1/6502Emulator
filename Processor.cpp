@@ -5,6 +5,7 @@
 
 //Interrupt Vectors - BRK is a software interrupt and the rest are hardware interrupts
 //If the internal inhibit/IRQ Disable Flag (2nd bit in status register) is set, then an interrupt request is ignored
+
 #define IRQBRK_LO_ADDR 0xFFFE
 #define IRQBRK_HI_ADDR 0xFFFF
 #define NMI_LO_ADDR 0xFFFA
@@ -12,14 +13,19 @@
 #define RESET_LO_ADDR 0xFFFC
 #define RESET_HI_ADDR 0xFFFD
 
+//Signal        Push PC and P       Set B Flag
+//NMI           Yes                 No
+//Reset         No                  No
+//IRQ           Yes                 No
+//BRK           Yes                 Yes
+
+
 //Use setIf flag and setOrClearFlag
 //Be careful when handling flags. Must change some of them. Sometimes they must be explicitly set and otherwise nothing is done. Other times, the value of the flag must be equal to
 //the value of the bit
 //When adding the dis assembler, it should be in a separate class called disassembler. In any case this should be in backlog
 Processor::Processor(){
     using a = Processor;
-    //this->addr_abs = 0;
-    //this->addr_rel = 0;
     this->opcode = 0;
     this->cycles = 0;
     this->status = 0;
@@ -104,7 +110,6 @@ void Processor::write(u16 a, u8 b){
 //Next two functions. Clock calls the instruction and the instruction calls fetch
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//Understand this in more detail
 //Use AND() as an example to run through this
 //This is the main "runner" of the processor and the function pointer runs the instruction
 //To run the processor call while(true){ProcessorObject.clock()}
@@ -117,8 +122,7 @@ void Processor::clock(){
         this->PC++;
         cycles = lookup[opcode].cycles;
         u16 addr_abs, addr_rel;
-        u8 additional_cycle1 = (this->*lookup[opcode].addrmode)(this->PC, addr_abs, addr_rel);//We must fix this. This function addrmode changes the class variable state addr_abs and other variables including PC
-        //At this point in time, we have fetched the absolute address depending on the address mode above. Only now can we operate on the addr_abs
+        u8 additional_cycle1 = (this->*lookup[opcode].addrmode)(this->PC, addr_abs, addr_rel);
         u8 additional_cycle2 = (this->*lookup[opcode].operate)(addr_abs, addr_rel);
         cycles += (additional_cycle1 & additional_cycle2);//We must fix this. Using bit operations on this seems like overkill. Add_cycle_1 and add_cycle_2 either returns a 0 or 1. Make this explicit here.
     }
@@ -145,7 +149,6 @@ void Processor::reset(){
     u16 high = read(RESET_HI_ADDR);
     PC = (high << 8) | low;
     cycles = 8;
-
 }
 
 void Processor::setOrClearFlag(enum validFlagBits b, bool isSet){
