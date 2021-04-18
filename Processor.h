@@ -73,8 +73,8 @@ public:
     void irq();
     void nmi();
     u8 fetch();
-    u16 addr_abs;
-    u16 addr_rel;//Check if this can be defined as a Byte instead
+    //u16 addr_abs;
+    //u16 addr_rel;//Check if this can be defined as a Byte instead
     u8 opcode;
     u8 cycles;
     u8 status;

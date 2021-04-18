@@ -39,8 +39,8 @@
 //When adding the dis assembler, it should be in a separate class called disassembler. In any case this should be in backlog
 Processor::Processor(){
     using a = Processor;
-    this->addr_abs = 0;
-    this->addr_rel = 0;
+    //this->addr_abs = 0;
+    //this->addr_rel = 0;
     this->opcode = 0;
     this->cycles = 0;
     this->status = 0;
@@ -84,9 +84,8 @@ void Processor::irq(){
         setOrClearFlag(I, 1);
         write(0x0100 + SP, status);
         SP--;
-        addr_abs = IRQBRK_LO_ADDR;
-        u16 low = read(addr_abs + 0);
-        u16 high = read(addr_abs + 1);
+        u16 low = read(IRQBRK_LO_ADDR);
+        u16 high = read(IRQBRK_HI_ADDR);
         PC = (high << 8) | low;
         cycles = 7;
     }
@@ -104,9 +103,8 @@ void Processor::nmi(){
         setOrClearFlag(I, 1);
         write(STACK_BASE_ADDR + SP, status);
         SP--;
-        addr_abs = NMI_LO_ADDR;
-        u16 low = read(addr_abs + 0);
-        u16 high = read(addr_abs + 1);
+        u16 low = read(NMI_LO_ADDR);
+        u16 high = read(NMI_HI_ADDR);
         PC = (high << 8) | low;
         cycles = 8;
     }
