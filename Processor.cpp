@@ -127,8 +127,8 @@ void Processor::write(u16 a, u8 b){
 //Next two functions. Clock calls the instruction and the instruction calls fetch
 
 
-// TODO adjust addressing functions to alter the passed paramters
-// TODO save the adjusted paramters as separate variables in clock()
+// TODO adjust addressing functions to alter the passed parameters
+// TODO save the adjusted parameters as separate variables in clock()
 // TODO remove class variables PC addr_abs and addr_rel
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //Understand this in more detail
@@ -143,7 +143,8 @@ void Processor::clock(){
         opcode = read(this->PC);
         this->PC++;
         cycles = lookup[opcode].cycles;
-        u8 additional_cycle1 = (this->*lookup[opcode].addrmode)(this->PC, this->addr_abs, this->addr_rel);//We must fix this. This function addrmode changes the class variable state addr_abs and other variables including PC
+        u16 addr_abs, addr_rel;
+        u8 additional_cycle1 = (this->*lookup[opcode].addrmode)(this->PC, addr_abs, addr_rel);//We must fix this. This function addrmode changes the class variable state addr_abs and other variables including PC
         //At this point in time, we have fetched the absolute address depending on the address mode above. Only now can we operate on the addr_abs
         u8 additional_cycle2 = (this->*lookup[opcode].operate)();
         cycles += (additional_cycle1 & additional_cycle2);//We must fix this. Using bit operations on this seems like overkill. Add_cycle_1 and add_cycle_2 either returns a 0 or 1. Make this explicit here.
@@ -206,7 +207,7 @@ u8 Processor::getFlag(enum validFlagBits f){
 }
 
 //ADDRESSING MODES
-//The addressing modes all return the absolute address and secondary they tell us if there are any additional instructions required. They do nothing else
+//The addressing modes all return the absolute address and secondary they tell us if there are any additional clock cycles required. They do nothing else
 
 //Implied still "fetches" the operand, albeit not from memory. Its in the accumulator.
 u8 Processor::IMP(u16 &PC, u16 &addr_abs, u16 &addr_rel){
@@ -233,17 +234,17 @@ u8 Processor::ABS(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     PC++;
     u16 highu8 = read(PC);
     PC++;
-    this->addr_abs = (highu8 << 8) | lowu8;
+    addr_abs = (highu8 << 8) | lowu8;
     return 0;
 }
 
 u8 Processor::ABY(u16 &PC, u16 &addr_abs, u16 &addr_rel){
-    u16 lowu8 = read(this->PC);
-    this->PC++;
-    u16 highu8 = read(this->PC);
-    this->PC++;
-    this->addr_abs = (highu8 << 8) | lowu8;
-    this->addr_abs += this->Y;
+    u16 lowu8 = read(PC);
+    PC++;
+    u16 highu8 = read(PC);
+    PC++;
+    addr_abs = (highu8 << 8) | lowu8;
+    addr_abs += this->Y;
     //Cross page boundary
     if((addr_abs & 0xFF00) != (highu8 << 8)){
         return 1;//"May" need an additional clock cycle
@@ -255,11 +256,11 @@ u8 Processor::ABY(u16 &PC, u16 &addr_abs, u16 &addr_rel){
 
 //"Both memory locations specifying the effective address must be in zero page"
 u8 Processor::IIX(u16 &PC, u16 &addr_abs, u16 &addr_rel){
-    u16 t = read(this->PC);
-    this->PC++;
+    u16 t = read(PC);
+    PC++;
     u16 low = read((u16)(t + (u16)X) & 0x00FF);
     u16 high = read((u16)(t + (u16)X + 1) & 0x00FF);
-    this->addr_abs = (high << 8) | low;
+    addr_abs = (high << 8) | low;
     return 0;
 }
 
@@ -291,12 +292,12 @@ u8 Processor::REL(u16 &PC, u16 &addr_abs, u16 &addr_rel){
 }
 
 u8 Processor::ABX(u16 &PC, u16 &addr_abs, u16 &addr_rel){
-    u16 lowu8 = read(this->PC);
-    this->PC++;
-    u16 highu8 = read(this->PC);
-    this->PC++;
-    this->addr_abs = (highu8 << 8) | lowu8;
-    this->addr_abs += this->X;
+    u16 lowu8 = read(PC);
+    PC++;
+    u16 highu8 = read(PC);
+    PC++;
+    addr_abs = (highu8 << 8) | lowu8;
+    addr_abs += this->X;
     //Cross page boundary
     if((addr_abs & 0xFF00) != (highu8 << 8)){//Cross page boundary
         return 1;//"May" need an additional clock cycle
@@ -307,27 +308,27 @@ u8 Processor::ABX(u16 &PC, u16 &addr_abs, u16 &addr_rel){
 }
 
 u8 Processor::IND(u16 &PC, u16 &addr_abs, u16 &addr_rel){
-    u16 ptrLow = read(this->PC);
-    this->PC++;
-    u16 ptrHigh = read(this->PC);
-    this->PC++;
+    u16 ptrLow = read(PC);
+    PC++;
+    u16 ptrHigh = read(PC);
+    PC++;
     u16 ptr = (ptrHigh << 8) | ptrLow;
     if(ptrLow == 0x00FF){
-        this->addr_abs = (read(ptr & 0xFF00) << 8) | read(ptr + 0);
+        addr_abs = (read(ptr & 0xFF00) << 8) | read(ptr + 0);
     }
     else {
-        this->addr_abs = (read(ptr + 1) << 8) | read(ptr + 0);
+        addr_abs = (read(ptr + 1) << 8) | read(ptr + 0);
     }
 
     return 0;
 }
 
 u8 Processor::IIY(u16 &PC, u16 &addr_abs, u16 &addr_rel){
-    u16 t = read(this->PC);
-    this->PC++;
+    u16 t = read(PC);
+    PC++;
     u16 low = read(t & 0x00FF);
     u16 high = read((t + 1) & 0x00FF);
-    this->addr_abs = (high << 8) | low;
+    addr_abs = (high << 8) | low;
     addr_abs += Y;
     if(addr_abs & 0xFF00 != (high << 8)){
         return 1;//"May" need an additional clock cycle
