@@ -1,8 +1,9 @@
 #include "Processor.h"
 #include "Memory.h"
 
-//Interrupt Vectors (Two are unused - check why)
 #define STACK_BASE_ADDR 0x0100
+
+//Interrupt Vectors (Two are unused - check why)
 #define IRQBRK_LO_ADDR 0xFFFE
 #define IRQBRK_HI_ADDR 0xFFFF
 #define NMI_LO_ADDR 0xFFFA
