@@ -1,7 +1,6 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
-#include "instructions.h"
 #include <cstdint>
 #include <vector>
 #include <string>
@@ -15,13 +14,18 @@
 #define BIT_SIX     (1 << 6)
 #define BIT_SEVEN   (1 << 7)
 
-
+class Processor;
 class Memory;
 struct Instruction;
 
 using u8 = uint8_t;
 using u16 = uint16_t;
 
+struct Instruction{
+    uint8_t(Processor::*operate)(u16 addr_abs, u16 addr_rel) = nullptr;
+    uint8_t(Processor::*addrmode)(u16 &PC, u16 &addr_abs, u16 &addr_rel) = nullptr;
+    uint8_t cycles = 0;
+};
 
 class Processor{
 
@@ -43,29 +47,29 @@ public:
     u8 IIX(u16 &PC, u16 &addr_abs, u16 &addr_rel);
     u8 IIY(u16 &PC, u16 &addr_abs, u16 &addr_rel);
     u8 IND(u16 &PC, u16 &addr_abs, u16 &addr_rel);
-    //Load
+    //Load Operations
     u8 LDA(u16 addr_abs, u16 addr_rel); u8 LDX(u16 addr_abs, u16 addr_rel); u8 LDY(u16 addr_abs, u16 addr_rel); u8 STA(u16 addr_abs, u16 addr_rel); u8 STX(u16 addr_abs, u16 addr_rel); u8 STY(u16 addr_abs, u16 addr_rel);
-    //Register Transfers
+    //Register Transfer Operations
     u8 TAX(u16 addr_abs, u16 addr_rel); u8 TAY(u16 addr_abs, u16 addr_rel); u8 TXA(u16 addr_abs, u16 addr_rel); u8 TYA(u16 addr_abs, u16 addr_rel);
-    //Stack
+    //Stack Operations
     u8 TSX(u16 addr_abs, u16 addr_rel); u8 TXS(u16 addr_abs, u16 addr_rel); u8 PHA(u16 addr_abs, u16 addr_rel); u8 PHP(u16 addr_abs, u16 addr_rel); u8 PLA(u16 addr_abs, u16 addr_rel); u8 PLP(u16 addr_abs, u16 addr_rel);
-    //Logical
+    //Logical Operations
     u8 AND(u16 addr_abs, u16 addr_rel); u8 EOR(u16 addr_abs, u16 addr_rel); u8 ORA(u16 addr_abs, u16 addr_rel); u8 BIT(u16 addr_abs, u16 addr_rel);
-    //Arithmetic
+    //Arithmetic Operations
     u8 ADC(u16 addr_abs, u16 addr_rel); u8 SBC(u16 addr_abs, u16 addr_rel); u8 CMP(u16 addr_abs, u16 addr_rel); u8 CPX(u16 addr_abs, u16 addr_rel); u8 CPY(u16 addr_abs, u16 addr_rel);
-    //IncDecrements
+    //Increment Decrement Operations
     u8 INC(u16 addr_abs, u16 addr_rel); u8 INX(u16 addr_abs, u16 addr_rel); u8 INY(u16 addr_abs, u16 addr_rel); u8 DEC(u16 addr_abs, u16 addr_rel); u8 DEX(u16 addr_abs, u16 addr_rel); u8 DEY(u16 addr_abs, u16 addr_rel);
-    //Shifts
+    //Shift Operations
     u8 ASL(u16 addr_abs, u16 addr_rel); u8 LSR(u16 addr_abs, u16 addr_rel); u8 ROL(u16 addr_abs, u16 addr_rel); u8 ROR(u16 addr_abs, u16 addr_rel);
-    //JumpCalls
+    //Jump & Call Operations
     u8 JMP(u16 addr_abs, u16 addr_rel); u8 JSR(u16 addr_abs, u16 addr_rel); u8 RTS(u16 addr_abs, u16 addr_rel);
-    //Branches
+    //Branch Operations
     u8 BCC(u16 addr_abs, u16 addr_rel); u8 BCS(u16 addr_abs, u16 addr_rel); u8 BEQ(u16 addr_abs, u16 addr_rel); u8 BMI(u16 addr_abs, u16 addr_rel); u8 BNE(u16 addr_abs, u16 addr_rel); u8 BPL(u16 addr_abs, u16 addr_rel); u8 BVC(u16 addr_abs, u16 addr_rel); u8 BVS(u16 addr_abs, u16 addr_rel);
-    //StatusChange
+    //Status Change Operations
     u8 CLC(u16 addr_abs, u16 addr_rel); u8 CLD(u16 addr_abs, u16 addr_rel); u8 CLI(u16 addr_abs, u16 addr_rel); u8 CLV(u16 addr_abs, u16 addr_rel); u8 SEC(u16 addr_abs, u16 addr_rel); u8 SED(u16 addr_abs, u16 addr_rel); u8 SEI(u16 addr_abs, u16 addr_rel);
-    //SysFunctions
+    //SysFunctions Operations
     u8 BRK(u16 addr_abs, u16 addr_rel); u8 NOP(u16 addr_abs, u16 addr_rel); u8 RTI(u16 addr_abs, u16 addr_rel);
-    //Invalid
+    //Invalid Operations
     u8 XXX(u16 addr_abs, u16 addr_rel);
     //
     void clock();
@@ -73,8 +77,6 @@ public:
     void irq();
     void nmi();
     u8 fetch(uint16_t addr_abs);
-    //u16 addr_abs;
-    //u16 addr_rel;//Check if this can be defined as a Byte instead
     u8 opcode;
     u8 cycles;
     u8 status;
