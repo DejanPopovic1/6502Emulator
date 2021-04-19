@@ -1,4 +1,4 @@
 #if to compile a bugless or bug version of the 6502
 Complete unit tests
 Oganise unit tests in folder structure
-Generalise the code and architect a class heirarchy so that other emulators may be implemented from general class interfaces???!!!
+Generalise the code and architect a class heirarchy so that other emulators may be implemented from general class interfaces???!!! In turn, all these base classes derive from the Turing Machine, which you may also simply emulate

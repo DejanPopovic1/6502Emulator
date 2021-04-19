@@ -3,6 +3,8 @@
 
 #define STACK_BASE_ADDR 0x0100
 
+//Note: When writing an assembler, check the ZPA addressing mode as an example. The addressing mode will be implied through the operands supplied to it
+
 //Interrupt Vectors - BRK is a software interrupt and the rest are hardware interrupts
 //If the internal inhibit/IRQ Disable Flag (2nd bit in status register) is set, then an interrupt request is ignored
 
@@ -123,6 +125,7 @@ void Processor::clock(){
         cycles = lookup[opcode].cycles;
         u16 addr_abs;
         u8 addr_rel;
+        //By this time, PC is pointing the next byte which presumably has the next operand
         u8 additional_cycle1 = (this->*lookup[opcode].addrmode)(this->PC, addr_abs, addr_rel);
         u8 additional_cycle2 = (this->*lookup[opcode].operate)(addr_abs, addr_rel);
         cycles += (additional_cycle1 & additional_cycle2);//We must fix this. Using bit operations on this seems like overkill. Add_cycle_1 and add_cycle_2 either returns a 0 or 1. Make this explicit here.
