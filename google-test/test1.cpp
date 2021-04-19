@@ -9,17 +9,6 @@
 #define RESET_LO_ADDR 0xFFFC
 #define RESET_HI_ADDR 0xFFFD
 
-void loadMemory(Memory mem){
-//    mem[0x0200] = 0x00;
-//    mem[0x0201] = 0x00;
-//    mem[0x0202] = 0x00;
-//    mem[0x0203] = 0x00;
-//    mem[0x0204] = 0x00;
-//    mem[0x0205] = 0x00;
-//    mem[0x0206] = 0x00;
-//    mem[0x0205] = 0x00;
-}
-
 class ProcessorTest : public testing::Test
 {
 public:
@@ -32,31 +21,38 @@ public:
         mem[RESET_LO_ADDR] = 0x00;
         mem[RESET_HI_ADDR] = 0x02;
         cpu.reset();
+        cpu.X = 7;
         //At this point, PC is set to 0x0200
     }
     virtual void TearDown(){
     }
 };
 
-//TEST(sampleTest, oneEqualsOne) {
-//    Memory m;
-//    add(1,4);
-//    EXPECT_EQ(1, 1);
-//}
-
-TEST_F(ProcessorTest, impliedAddressingDoesntChangePCNorAddCycles) {
+//The PC is not always itself the Address. Addressing modes tell us how to calculate the operand address from a
+//given set of parameters, one of the most important being the PC
+TEST_F(ProcessorTest, impliedAddressingDoesntChangePC_noAddCycles) {
     int additionalCycles = cpu.IMP(cpu.PC, addr_abs, addr_rel);
     EXPECT_EQ(cpu.PC, 0x0200);
     EXPECT_EQ(additionalCycles, 0);
     EXPECT_EQ(addr_abs, 0x0042);
 }
 
-TEST_F(ProcessorTest, zeroPageAddressingIncrementsPCAndNotAddCycles) {
+TEST_F(ProcessorTest, zeroPageAddressingIncrementsPC_AbsAddrEqualsFirstByteOfPC_noAddCycles) {
     int additionalCycles = cpu.ZPA(cpu.PC, addr_abs, addr_rel);
     EXPECT_EQ(cpu.PC, 0x0201);
     EXPECT_EQ(addr_abs, 0x0000);
     EXPECT_EQ(additionalCycles, 0);
 }
+
+TEST_F(ProcessorTest, indexedZeroPageAddressingIncrementsPC_AbsAddrEqualsXPlusPC_noAddCycles) {
+    int additionalCycles = cpu.ZPX(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(cpu.PC, 0x0201);
+    EXPECT_EQ(addr_abs, 0x0007);
+    EXPECT_EQ(additionalCycles, 0);
+}
+
+
+
 
 //TEST_F(ProcessorTest, impliedAddressingDoesntSetAddress) {
 //    cpu.IMP(cpu.PC, addr_abs, addr_rel);
