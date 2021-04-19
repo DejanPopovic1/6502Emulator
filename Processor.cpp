@@ -121,7 +121,8 @@ void Processor::clock(){
         opcode = read(this->PC);
         this->PC++;
         cycles = lookup[opcode].cycles;
-        u16 addr_abs, addr_rel;
+        u16 addr_abs;
+        u8 addr_rel;
         u8 additional_cycle1 = (this->*lookup[opcode].addrmode)(this->PC, addr_abs, addr_rel);
         u8 additional_cycle2 = (this->*lookup[opcode].operate)(addr_abs, addr_rel);
         cycles += (additional_cycle1 & additional_cycle2);//We must fix this. Using bit operations on this seems like overkill. Add_cycle_1 and add_cycle_2 either returns a 0 or 1. Make this explicit here.
@@ -182,11 +183,11 @@ u8 Processor::getFlag(enum validFlagBits f){
 //The addressing modes all return the absolute address and secondary they tell us if there are any additional clock cycles required. They do nothing else
 
 //Implied still "fetches" the operand, albeit not from memory. Its in the accumulator.
-u8 Processor::IMP(u16 &PC, u16 &addr_abs, u16 &addr_rel){
+u8 Processor::IMP(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     return 0;
 }
 
-u8 Processor::ZPA(u16 &PC, u16 &addr_abs, u16 &addr_rel){
+u8 Processor::ZPA(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     addr_abs = read(PC);
     PC++;
     addr_abs &= 0x00FF;
@@ -194,14 +195,14 @@ u8 Processor::ZPA(u16 &PC, u16 &addr_abs, u16 &addr_rel){
 }
 
 //Implement wrap around
-u8 Processor::ZPY(u16 &PC, u16 &addr_abs, u16 &addr_rel){
+u8 Processor::ZPY(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     addr_abs = read(PC) + this->Y;
     PC++;
     addr_abs &= 0x00FF;
     return 0;
 }
 
-u8 Processor::ABS(u16 &PC, u16 &addr_abs, u16 &addr_rel){
+u8 Processor::ABS(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     u16 lowu8 = read(PC);
     PC++;
     u16 highu8 = read(PC);
@@ -210,7 +211,7 @@ u8 Processor::ABS(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     return 0;
 }
 
-u8 Processor::ABY(u16 &PC, u16 &addr_abs, u16 &addr_rel){
+u8 Processor::ABY(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     u16 lowu8 = read(PC);
     PC++;
     u16 highu8 = read(PC);
@@ -227,7 +228,7 @@ u8 Processor::ABY(u16 &PC, u16 &addr_abs, u16 &addr_rel){
 }
 
 //"Both memory locations specifying the effective address must be in zero page"
-u8 Processor::IIX(u16 &PC, u16 &addr_abs, u16 &addr_rel){
+u8 Processor::IIX(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     u16 t = read(PC);
     PC++;
     u16 low = read((u16)(t + (u16)X) & 0x00FF);
@@ -236,13 +237,13 @@ u8 Processor::IIX(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     return 0;
 }
 
-u8 Processor::IMM(u16 &PC, u16 &addr_abs, u16 &addr_rel){
+u8 Processor::IMM(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     addr_abs = PC++;
     return 0;
 }
 
 //Must implement a wrap around here!
-u8 Processor::ZPX(u16 &PC, u16 &addr_abs, u16 &addr_rel){
+u8 Processor::ZPX(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     addr_abs = read(PC) + this->X;
     PC++;
     addr_abs &= 0x00FF;
@@ -254,7 +255,7 @@ u8 Processor::ZPX(u16 &PC, u16 &addr_abs, u16 &addr_rel){
 //If xxxxxxxx is negative, i.e. if 1xxxxxxx, then:
 //11111111*1*xxxxxxx
 //Else, 00000000*0*xxxxxxx
-u8 Processor::REL(u16 &PC, u16 &addr_abs, u16 &addr_rel){
+u8 Processor::REL(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     addr_rel = read(PC);
     PC++;
     if(addr_rel & 0x80){
@@ -263,7 +264,7 @@ u8 Processor::REL(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     return 0;
 }
 
-u8 Processor::ABX(u16 &PC, u16 &addr_abs, u16 &addr_rel){
+u8 Processor::ABX(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     u16 lowu8 = read(PC);
     PC++;
     u16 highu8 = read(PC);
@@ -279,7 +280,7 @@ u8 Processor::ABX(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     }
 }
 
-u8 Processor::IND(u16 &PC, u16 &addr_abs, u16 &addr_rel){
+u8 Processor::IND(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     u16 ptrLow = read(PC);
     PC++;
     u16 ptrHigh = read(PC);
@@ -295,7 +296,7 @@ u8 Processor::IND(u16 &PC, u16 &addr_abs, u16 &addr_rel){
     return 0;
 }
 
-u8 Processor::IIY(u16 &PC, u16 &addr_abs, u16 &addr_rel){
+u8 Processor::IIY(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     u16 t = read(PC);
     PC++;
     u16 low = read(t & 0x00FF);
@@ -315,7 +316,7 @@ u8 Processor::IIY(u16 &PC, u16 &addr_abs, u16 &addr_rel){
 //INSTRUCTIONS
 //====================
 
-u8 Processor::ADC(u16 addr_abs, u16 addr_rel){
+u8 Processor::ADC(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     u16 temp = (u16)A + (u16)fetched + (u16)getFlag(C);
     setOrClearFlag(C, temp > 255);
@@ -328,7 +329,7 @@ u8 Processor::ADC(u16 addr_abs, u16 addr_rel){
 
 
 
-u8 Processor::SBC(u16 addr_abs, u16 addr_rel){
+u8 Processor::SBC(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     u16 value = ((u16)fetched) ^ 0x00FF;
     u16 temp = (u16)A + value + (u16)getFlag(C);
@@ -340,7 +341,7 @@ u8 Processor::SBC(u16 addr_abs, u16 addr_rel){
     return 1;
 }
 
-u8 Processor::AND(u16 addr_abs, u16 addr_rel){
+u8 Processor::AND(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     this->A = this->A & fetched;
     setOrClearFlag(Z, A == 0x00);
@@ -349,7 +350,7 @@ u8 Processor::AND(u16 addr_abs, u16 addr_rel){
 }
 
 
-u8 Processor::ASL(u16 addr_abs, u16 addr_rel){
+u8 Processor::ASL(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);//If its implied addressing mode, it wont update any internal variables. One of the addressing modes is implied.
     setOrClearFlag(C, fetched & 0x80);
     setOrClearFlag(Z, !(fetched << 1));
@@ -364,7 +365,7 @@ u8 Processor::ASL(u16 addr_abs, u16 addr_rel){
 }
 
 
-u8 Processor::BCC(u16 addr_abs, u16 addr_rel){
+u8 Processor::BCC(u16 addr_abs, u8 addr_rel){
     if (getFlag(C) == 0)
     {
         cycles++;
@@ -377,7 +378,7 @@ u8 Processor::BCC(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::BCS(u16 addr_abs, u16 addr_rel){
+u8 Processor::BCS(u16 addr_abs, u8 addr_rel){
     if(getFlag(C) == 1){
         cycles++;
         addr_abs = PC + addr_rel;
@@ -389,7 +390,7 @@ u8 Processor::BCS(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::BEQ(u16 addr_abs, u16 addr_rel){
+u8 Processor::BEQ(u16 addr_abs, u8 addr_rel){
     if (getFlag(Z) == 1)
     {
         cycles++;
@@ -403,7 +404,7 @@ u8 Processor::BEQ(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::BIT(u16 addr_abs, u16 addr_rel){
+u8 Processor::BIT(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     setOrClearFlag(Z, !fetched & A);
     setOrClearFlag(V, fetched & BIT_SIX);//Sixth bit. Add macro's. Rather use 1 << 6 as the macro
@@ -412,7 +413,7 @@ u8 Processor::BIT(u16 addr_abs, u16 addr_rel){
 }
 
 
-u8 Processor::BMI(u16 addr_abs, u16 addr_rel){
+u8 Processor::BMI(u16 addr_abs, u8 addr_rel){
     if (getFlag(N) == 1)
     {
         cycles++;
@@ -426,7 +427,7 @@ u8 Processor::BMI(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::BNE(u16 addr_abs, u16 addr_rel){
+u8 Processor::BNE(u16 addr_abs, u8 addr_rel){
     if (getFlag(Z) == 0)
     {
         cycles++;
@@ -440,7 +441,7 @@ u8 Processor::BNE(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::BPL(u16 addr_abs, u16 addr_rel){
+u8 Processor::BPL(u16 addr_abs, u8 addr_rel){
     if (getFlag(N) == 0)
     {
         cycles++;
@@ -470,7 +471,7 @@ u8 Processor::BPL(u16 addr_abs, u16 addr_rel){
 //RESET         FFFC        FFFD
 //See https://en.wikipedia.org/wiki/Interrupts_in_65xx_processors
 
-u8 Processor::BRK(u16 addr_abs, u16 addr_rel){
+u8 Processor::BRK(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     PC++;
 
@@ -495,7 +496,7 @@ u8 Processor::BRK(u16 addr_abs, u16 addr_rel){
 }
 
 
-u8 Processor::BVC(u16 addr_abs, u16 addr_rel){
+u8 Processor::BVC(u16 addr_abs, u8 addr_rel){
     if (getFlag(V) == 0)
     {
         cycles++;
@@ -510,7 +511,7 @@ u8 Processor::BVC(u16 addr_abs, u16 addr_rel){
 }
 
 
-u8 Processor::BVS(u16 addr_abs, u16 addr_rel){
+u8 Processor::BVS(u16 addr_abs, u8 addr_rel){
     if (getFlag(V) == 1)
     {
         cycles++;
@@ -524,30 +525,30 @@ u8 Processor::BVS(u16 addr_abs, u16 addr_rel){
 }
 
 
-u8 Processor::CLC(u16 addr_abs, u16 addr_rel){
+u8 Processor::CLC(u16 addr_abs, u8 addr_rel){
     setOrClearFlag(C, false);
     return 0;
 }
 
 
-u8 Processor::CLD(u16 addr_abs, u16 addr_rel){
+u8 Processor::CLD(u16 addr_abs, u8 addr_rel){
     setOrClearFlag(D, false);
     return 0;
 }
 
 
-u8 Processor::CLI(u16 addr_abs, u16 addr_rel){
+u8 Processor::CLI(u16 addr_abs, u8 addr_rel){
     setOrClearFlag(I, false);
     return 0;
 }
 
 
-u8 Processor::CLV(u16 addr_abs, u16 addr_rel){
+u8 Processor::CLV(u16 addr_abs, u8 addr_rel){
     setOrClearFlag(V, false);
     return 0;
 }
 
-u8 Processor::CMP(u16 addr_abs, u16 addr_rel){
+u8 Processor::CMP(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     setOrClearFlag(C, A >= fetched);
     setOrClearFlag(Z, A == fetched);
@@ -555,7 +556,7 @@ u8 Processor::CMP(u16 addr_abs, u16 addr_rel){
     return 1;
 }
 
-u8 Processor::CPX(u16 addr_abs, u16 addr_rel){
+u8 Processor::CPX(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     setOrClearFlag(C, X >= fetched);
     setOrClearFlag(Z, X == fetched);
@@ -563,7 +564,7 @@ u8 Processor::CPX(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::CPY(u16 addr_abs, u16 addr_rel){
+u8 Processor::CPY(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     setOrClearFlag(C, Y >= fetched);
     setOrClearFlag(Z, Y == fetched);
@@ -571,7 +572,7 @@ u8 Processor::CPY(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::DEC(u16 addr_abs, u16 addr_rel){
+u8 Processor::DEC(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     fetched--;
     write(addr_abs, fetched);
@@ -580,21 +581,21 @@ u8 Processor::DEC(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::DEX(u16 addr_abs, u16 addr_rel){
+u8 Processor::DEX(u16 addr_abs, u8 addr_rel){
     X--;
     setOrClearFlag(Z, !X);
     setOrClearFlag(N, X & BIT_SEVEN);
     return 0;
 }
 
-u8 Processor::DEY(u16 addr_abs, u16 addr_rel){
+u8 Processor::DEY(u16 addr_abs, u8 addr_rel){
     Y--;
     setOrClearFlag(Z, !Y);
     setOrClearFlag(N, Y & BIT_SEVEN);
     return 0;
 }
 
-u8 Processor::EOR(u16 addr_abs, u16 addr_rel){
+u8 Processor::EOR(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     A ^= fetched;
     setOrClearFlag(Z, !A);
@@ -602,7 +603,7 @@ u8 Processor::EOR(u16 addr_abs, u16 addr_rel){
     return 1;
 }
 
-u8 Processor::INC(u16 addr_abs, u16 addr_rel){
+u8 Processor::INC(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     fetched++;
     write(addr_abs, fetched);
@@ -611,26 +612,26 @@ u8 Processor::INC(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::INX(u16 addr_abs, u16 addr_rel){
+u8 Processor::INX(u16 addr_abs, u8 addr_rel){
     X++;
     setOrClearFlag(Z, !X);
     setOrClearFlag(N, X & BIT_SEVEN);
     return 0;
 }
 
-u8 Processor::INY(u16 addr_abs, u16 addr_rel){
+u8 Processor::INY(u16 addr_abs, u8 addr_rel){
     Y++;
     setOrClearFlag(Z, !Y);
     setOrClearFlag(N, Y & BIT_SEVEN);
     return 0;
 }
 
-u8 Processor::JMP(u16 addr_abs, u16 addr_rel){
+u8 Processor::JMP(u16 addr_abs, u8 addr_rel){
     PC = addr_abs;
     return 0;
 }
 
-u8 Processor::JSR(u16 addr_abs, u16 addr_rel){
+u8 Processor::JSR(u16 addr_abs, u8 addr_rel){
     u16 addressToBePushed = PC - 1;
     write(STACK_BASE_ADDR + SP, addressToBePushed >> 8);//If this is an error, then try (addressToBePushed >> 8) & 0x00FF
     SP--;
@@ -640,7 +641,7 @@ u8 Processor::JSR(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::LDA(u16 addr_abs, u16 addr_rel){
+u8 Processor::LDA(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     A = fetched;
     setOrClearFlag(Z, A == 0);
@@ -648,7 +649,7 @@ u8 Processor::LDA(u16 addr_abs, u16 addr_rel){
     return 1;
 }
 
-u8 Processor::LDX(u16 addr_abs, u16 addr_rel){
+u8 Processor::LDX(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     X = fetched;
     setOrClearFlag(Z, X == 0);
@@ -656,7 +657,7 @@ u8 Processor::LDX(u16 addr_abs, u16 addr_rel){
     return 1;
 }
 
-u8 Processor::LDY(u16 addr_abs, u16 addr_rel){
+u8 Processor::LDY(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     Y = fetched;
     setOrClearFlag(Z, Y == 0);
@@ -664,7 +665,7 @@ u8 Processor::LDY(u16 addr_abs, u16 addr_rel){
     return 1;
 }
 
-u8 Processor::LSR(u16 addr_abs, u16 addr_rel){
+u8 Processor::LSR(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     u16 originalFetched = fetched;
     fetched = fetched >> 1;
@@ -681,11 +682,11 @@ u8 Processor::LSR(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::NOP(u16 addr_abs, u16 addr_rel){
+u8 Processor::NOP(u16 addr_abs, u8 addr_rel){
     return 0;
 }
 
-u8 Processor::ORA(u16 addr_abs, u16 addr_rel){
+u8 Processor::ORA(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     A |= fetched;
     setOrClearFlag(Z, A == 0);
@@ -696,7 +697,7 @@ u8 Processor::ORA(u16 addr_abs, u16 addr_rel){
 //6502 has a base location in memory for the stack pointer which is located in page 0x0100
 //Add a MACRO for this so that it explains it
 //The stack pointer grows downwards and therefore everytime we push onto it, we decrement
-u8 Processor::PHA(u16 addr_abs, u16 addr_rel){
+u8 Processor::PHA(u16 addr_abs, u8 addr_rel){
     write(STACK_BASE_ADDR + SP, A);
     SP--;
     return 0;
@@ -713,7 +714,7 @@ u8 Processor::PHA(u16 addr_abs, u16 addr_rel){
 //https://wiki.nesdev.com/w/index.php/Status_flags
 //http://forums.nesdev.com/viewtopic.php?p=64224#p64224
 //
-u8 Processor::PHP(u16 addr_abs, u16 addr_rel){
+u8 Processor::PHP(u16 addr_abs, u8 addr_rel){
     u8 temp = status;
     temp |= BIT_FOUR;
     temp |= BIT_FIVE;
@@ -724,7 +725,7 @@ u8 Processor::PHP(u16 addr_abs, u16 addr_rel){
 
 //We first increment the stack pointer
 //Macro the value 0x80
-u8 Processor::PLA(u16 addr_abs, u16 addr_rel){
+u8 Processor::PLA(u16 addr_abs, u8 addr_rel){
     SP++;
     A = read(STACK_BASE_ADDR + SP);
     setOrClearFlag(Z, A == 0x00);
@@ -733,13 +734,13 @@ u8 Processor::PLA(u16 addr_abs, u16 addr_rel){
 }
 
 //Just check because the unused register U might be set to 1. Check David Barr and NES forums
-u8 Processor::PLP(u16 addr_abs, u16 addr_rel){
+u8 Processor::PLP(u16 addr_abs, u8 addr_rel){
     SP++;
     status = read(STACK_BASE_ADDR + SP);
     return 0;
 }
 
-u8 Processor::ROL(u16 addr_abs, u16 addr_rel){
+u8 Processor::ROL(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     u8 newCarryFlagValue = fetched & (BIT_SEVEN);
     u8 result = (fetched << 1) | getFlag(C);
@@ -756,7 +757,7 @@ u8 Processor::ROL(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::ROR(u16 addr_abs, u16 addr_rel){
+u8 Processor::ROR(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
     u8 newCarryFlagValue = fetched & BIT_ZERO;
     u8 result = (fetched >> 1) & ~BIT_SEVEN;//Force the 7th(leading) bit to be zero
@@ -791,7 +792,7 @@ u8 Processor::ROR(u16 addr_abs, u16 addr_rel){
 //This [interrupt] ignoring is done by the interrupt disable bit which can be set on by the programmer and is initialised on by the interrupt sequence or by the start sequence
 
 //When interrupting, the current status is saved (PC) and the the registers
-u8 Processor::RTI(u16 addr_abs, u16 addr_rel){
+u8 Processor::RTI(u16 addr_abs, u8 addr_rel){
     SP++;
     status = read(STACK_BASE_ADDR + SP);//The status register was the last value pushed on and so its the first value popped off
     SP++;
@@ -801,7 +802,7 @@ u8 Processor::RTI(u16 addr_abs, u16 addr_rel){
     return 0;
 }
 
-u8 Processor::RTS(u16 addr_abs, u16 addr_rel){
+u8 Processor::RTS(u16 addr_abs, u8 addr_rel){
     SP++;
     u16 low = read(STACK_BASE_ADDR + (SP));
     SP++;
@@ -812,70 +813,70 @@ u8 Processor::RTS(u16 addr_abs, u16 addr_rel){
     //Do NOT need to update addr_abs thats only for feeding arguments to instructions
 }
 
-u8 Processor::SEC(u16 addr_abs, u16 addr_rel){
+u8 Processor::SEC(u16 addr_abs, u8 addr_rel){
     setOrClearFlag(C, true);
     return 0;
 }
 
-u8 Processor::SED(u16 addr_abs, u16 addr_rel){
+u8 Processor::SED(u16 addr_abs, u8 addr_rel){
     setOrClearFlag(D, true);
     return 0;
 }
 
-u8 Processor::SEI(u16 addr_abs, u16 addr_rel){
+u8 Processor::SEI(u16 addr_abs, u8 addr_rel){
     setOrClearFlag(I, true);
     return 0;
 }
 
-u8 Processor::STA(u16 addr_abs, u16 addr_rel){
+u8 Processor::STA(u16 addr_abs, u8 addr_rel){
     write(addr_abs, A);
     return 0;
 }
 
-u8 Processor::STX(u16 addr_abs, u16 addr_rel){
+u8 Processor::STX(u16 addr_abs, u8 addr_rel){
     write(addr_abs, X);
     return 0;
 }
 
-u8 Processor::STY(u16 addr_abs, u16 addr_rel){
+u8 Processor::STY(u16 addr_abs, u8 addr_rel){
     write(addr_abs, Y);
     return 0;
 }
 
-u8 Processor::TAX(u16 addr_abs, u16 addr_rel){
+u8 Processor::TAX(u16 addr_abs, u8 addr_rel){
     X = A;
     setOrClearFlag(C, X == 0);
     setOrClearFlag(N, X & BIT_SEVEN);
     return 0;
 }
 
-u8 Processor::TAY(u16 addr_abs, u16 addr_rel){
+u8 Processor::TAY(u16 addr_abs, u8 addr_rel){
     Y = A;
     setOrClearFlag(C, Y == 0);
     setOrClearFlag(N, Y & BIT_SEVEN);
     return 0;
 }
 
-u8 Processor::TSX(u16 addr_abs, u16 addr_rel){
+u8 Processor::TSX(u16 addr_abs, u8 addr_rel){
     X = SP;
     setOrClearFlag(C, X == 0);
     setOrClearFlag(N, X & BIT_SEVEN);
     return 0;
 }
 
-u8 Processor::TXA(u16 addr_abs, u16 addr_rel){
+u8 Processor::TXA(u16 addr_abs, u8 addr_rel){
     A = X;
     setOrClearFlag(C, A == 0);
     setOrClearFlag(N, A & BIT_SEVEN);
     return 0;
 }
 
-u8 Processor::TXS(u16 addr_abs, u16 addr_rel){
+u8 Processor::TXS(u16 addr_abs, u8 addr_rel){
     SP = X;
     return 0;
 }
 
-u8 Processor::TYA(u16 addr_abs, u16 addr_rel){
+u8 Processor::TYA(u16 addr_abs, u8 addr_rel){
     A = Y;
     setOrClearFlag(C, A == 0);
     setOrClearFlag(N, A & BIT_SEVEN);
@@ -883,6 +884,6 @@ u8 Processor::TYA(u16 addr_abs, u16 addr_rel){
 }
 
 //Invalid Instruction
-u8 Processor::XXX(u16 addr_abs, u16 addr_rel){
+u8 Processor::XXX(u16 addr_abs, u8 addr_rel){
     return 0;
 }

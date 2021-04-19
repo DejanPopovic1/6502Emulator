@@ -3,6 +3,10 @@
 #define START_ADDRESS 0x0000
 #define END_ADDRESS 0xFFFF
 
+//If the below is not included, it technically isn't valid C++ code. See:
+//https://stackoverflow.com/questions/42756443/undefined-reference-with-gtest
+constexpr uint32_t Memory::MAX_MEM;
+
 Memory::Memory(){
     for(auto &i : this->ram) {
         i = 0x00;
