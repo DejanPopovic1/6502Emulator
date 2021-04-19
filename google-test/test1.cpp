@@ -20,6 +20,8 @@ public:
         cpu.connectMemory(&mem);
         mem[RESET_LO_ADDR] = 0x00;
         mem[RESET_HI_ADDR] = 0x02;
+        mem[0x0200] = 0x05;
+        mem[0x0201] = 0x06;
         cpu.reset();
         cpu.X = 0x07;
         cpu.Y = 0x11;
@@ -41,23 +43,71 @@ TEST_F(ProcessorTest, impliedAddressingDoesntChangePC_noAddCycles) {
 TEST_F(ProcessorTest, zeroPageAddressingIncrementsPC_AbsAddrEqualsFirstByteOfPC_noAddCycles) {
     int additionalCycles = cpu.ZPA(cpu.PC, addr_abs, addr_rel);
     EXPECT_EQ(cpu.PC, 0x0201);
-    EXPECT_EQ(addr_abs, 0x0000);
+    EXPECT_EQ(addr_abs, 0x0005);
     EXPECT_EQ(additionalCycles, 0);
 }
 
-TEST_F(ProcessorTest, indexedZeroPageAddressingIncrementsPC_AbsAddrEqualsPCPlusX_noAddCycles) {
+TEST_F(ProcessorTest, indexedZeroPageAddressingIncrementsPC_AbsAddrEqualsPCPlusX_noAddCycles_resultWrapsAroundByte) {
     int additionalCycles = cpu.ZPX(cpu.PC, addr_abs, addr_rel);
     EXPECT_EQ(cpu.PC, 0x0201);
-    EXPECT_EQ(addr_abs, 0x0007);
+    EXPECT_EQ(addr_abs, 0x0005 + 0x0007);
     EXPECT_EQ(additionalCycles, 0);
+    mem[RESET_LO_ADDR] = 0x00;
+    mem[RESET_HI_ADDR] = 0x02;
+    mem[0x0200] = 0x80;
+    cpu.reset();
+    cpu.X = 0xFF;
+    cpu.ZPX(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(addr_abs, 0x007F);
 }
 
-TEST_F(ProcessorTest, indexedZeroPageAddressingIncrementsPC_AbsAddrEqualsPCPlusY_noAddCycles) {
+TEST_F(ProcessorTest, indexedZeroPageAddressingIncrementsPC_AbsAddrEqualsPCPlusY_noAddCycles_resultWrapsAroundByte) {
     int additionalCycles = cpu.ZPY(cpu.PC, addr_abs, addr_rel);
     EXPECT_EQ(cpu.PC, 0x0201);
-    EXPECT_EQ(addr_abs, 0x0011);
+    EXPECT_EQ(addr_abs, 0x0005 + 0x0011);
     EXPECT_EQ(additionalCycles, 0);
+    mem[RESET_LO_ADDR] = 0x00;
+    mem[RESET_HI_ADDR] = 0x02;
+    mem[0x0200] = 0x80;
+    cpu.reset();
+    cpu.Y = 0xFF;
+    cpu.ZPY(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(addr_abs, 0x007F);
 }
+
+//TEST_F(ProcessorTest, indexedZeroPageAddressingIncrementsPC_AbsAddrEqualsPCPlusY_noAddCycles_resultWrapsAroundByte) {
+//    int additionalCycles = cpu.ZPY(cpu.PC, addr_abs, addr_rel);
+//    EXPECT_EQ(cpu.PC, 0x0201);
+//    EXPECT_EQ(addr_abs, 0x0011);
+//    EXPECT_EQ(additionalCycles, 0);
+//    cpu.reset();
+//    cpu.Y = 0xFF;
+//    addr_abs = 0x0080;
+//    cpu.ZPY(cpu.PC, addr_abs, addr_rel);
+//    EXPECT_EQ(addr_abs, 0x007F);
+//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //TEST_F(ProcessorTest, impliedAddressingDoesntSetAddress) {

@@ -1,6 +1,8 @@
 #include "Processor.h"
 #include "Memory.h"
 
+#include <iostream>
+
 #define STACK_BASE_ADDR 0x0100
 
 //Note: When writing an assembler, check the ZPA addressing mode as an example. The addressing mode will be implied through the operands supplied to it
@@ -245,9 +247,8 @@ u8 Processor::IMM(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     return 0;
 }
 
-//Must implement a wrap around here!
 u8 Processor::ZPX(u16 &PC, u16 &addr_abs, u8 &addr_rel){
-    addr_abs = read(PC) + this->X;
+    addr_abs = read(PC) + (u8)this->X;
     PC++;
     addr_abs &= 0x00FF;
     return 0;
