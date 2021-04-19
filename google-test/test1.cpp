@@ -44,9 +44,9 @@ public:
 //}
 
 TEST_F(ProcessorTest, impliedAddressingDoesntChangePCNorAddCycles) {
-    cpu.IMP(cpu.PC, addr_abs, addr_rel);
+    int additionalCycles = cpu.IMP(cpu.PC, addr_abs, addr_rel);
     EXPECT_EQ(cpu.PC, 0x0200);
-
+    EXPECT_EQ(additionalCycles, 0);
 }
 
 //TEST_F(ProcessorTest, impliedAddressingDoesntSetAddress) {
