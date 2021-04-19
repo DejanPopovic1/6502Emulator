@@ -21,7 +21,8 @@ public:
         mem[RESET_LO_ADDR] = 0x00;
         mem[RESET_HI_ADDR] = 0x02;
         cpu.reset();
-        cpu.X = 7;
+        cpu.X = 0x07;
+        cpu.Y = 0x11;
         //At this point, PC is set to 0x0200
     }
     virtual void TearDown(){
@@ -44,14 +45,19 @@ TEST_F(ProcessorTest, zeroPageAddressingIncrementsPC_AbsAddrEqualsFirstByteOfPC_
     EXPECT_EQ(additionalCycles, 0);
 }
 
-TEST_F(ProcessorTest, indexedZeroPageAddressingIncrementsPC_AbsAddrEqualsXPlusPC_noAddCycles) {
+TEST_F(ProcessorTest, indexedZeroPageAddressingIncrementsPC_AbsAddrEqualsPCPlusX_noAddCycles) {
     int additionalCycles = cpu.ZPX(cpu.PC, addr_abs, addr_rel);
     EXPECT_EQ(cpu.PC, 0x0201);
     EXPECT_EQ(addr_abs, 0x0007);
     EXPECT_EQ(additionalCycles, 0);
 }
 
-
+TEST_F(ProcessorTest, indexedZeroPageAddressingIncrementsPC_AbsAddrEqualsPCPlusY_noAddCycles) {
+    int additionalCycles = cpu.ZPY(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(cpu.PC, 0x0201);
+    EXPECT_EQ(addr_abs, 0x0011);
+    EXPECT_EQ(additionalCycles, 0);
+}
 
 
 //TEST_F(ProcessorTest, impliedAddressingDoesntSetAddress) {
