@@ -40,7 +40,7 @@ public:
 };
 
 TEST(sampleTest, oneEqualsOne) {
-//    Memory m;
+    Memory m;
     add(1,4);
     EXPECT_EQ(1, 1);
 }
