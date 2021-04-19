@@ -23,13 +23,11 @@ void loadMemory(Memory mem){
 class ProcessorTest : public testing::Test
 {
 public:
-
-    //cpu.connectMemory(&mem);
-    uint16_t addr_abs;
-    uint8_t addr_rel;
+    Memory mem;
+    Processor cpu;
+    uint16_t addr_abs = 0x0042;
+    uint8_t addr_rel = 0x42;
     virtual void SetUp(){
-        Memory mem;
-        Processor cpu;
         cpu.connectMemory(&mem);
         mem[RESET_LO_ADDR] = 0x00;
         mem[RESET_HI_ADDR] = 0x02;
@@ -39,19 +37,17 @@ public:
     }
 };
 
-TEST(sampleTest, oneEqualsOne) {
-    Memory m;
-    add(1,4);
-    EXPECT_EQ(1, 1);
-}
-
-//TEST_F(ProcessorTest, impliedAddressingDoesntSetAddress) {
-//    cpu.IMP(cpu.PC, addr_abs, addr_rel);
+//TEST(sampleTest, oneEqualsOne) {
+//    Memory m;
+//    add(1,4);
 //    EXPECT_EQ(1, 1);
-//    constexpr s32 NUM_CYCLES = 0;
-//    s32 CyclesUsed = cpu.Execute(NUM_CYCLES, mem);
-//    EXPECT_EQ(CyclesUsed, 0);
 //}
+
+TEST_F(ProcessorTest, impliedAddressingDoesntChangePCNorAddCycles) {
+    cpu.IMP(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(cpu.PC, 0x0200);
+
+}
 
 //TEST_F(ProcessorTest, impliedAddressingDoesntSetAddress) {
 //    cpu.IMP(cpu.PC, addr_abs, addr_rel);
