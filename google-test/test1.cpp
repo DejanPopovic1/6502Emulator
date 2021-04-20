@@ -47,6 +47,13 @@ TEST_F(ProcessorTest, immediateAddressingIncrementPC_AbsAddrEqualsPC_noAddCycles
     EXPECT_EQ(additionalCycles, 0);
 }
 
+TEST_F(ProcessorTest, absoluteAddressingIncrementPCTwice_AbsAddrEqualsDereferencedPC_noAddCycles) {
+    int additionalCycles = cpu.ABS(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(cpu.PC, 0x0202);
+    EXPECT_EQ(addr_abs, 0x0605);
+    EXPECT_EQ(additionalCycles, 0);
+}
+
 TEST_F(ProcessorTest, zeroPageAddressingIncrementsPC_AbsAddrEqualsFirstByteOfDereferencedPC_noAddCycles) {
     int additionalCycles = cpu.ZPA(cpu.PC, addr_abs, addr_rel);
     EXPECT_EQ(cpu.PC, 0x0201);
