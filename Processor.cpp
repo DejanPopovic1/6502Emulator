@@ -130,6 +130,11 @@ void Processor::clock(){
         //By this time, PC is pointing the next byte which presumably has the next operand
         u8 additional_cycle1 = (this->*lookup[opcode].addrmode)(this->PC, addr_abs, addr_rel);
         u8 additional_cycle2 = (this->*lookup[opcode].operate)(addr_abs, addr_rel);
+        //Some addressing modes will sometimes require an additional cycle.
+        //These are called added-cycle address modes (and designated by returning the value 1)
+        //An instruction may sometimes require an additional cycle for any one or more of its addressing modes.
+        //These are called variable cycle instructions (and are designated by returning the value 1)
+        //An added cycle addressing mode in one variable cycle instruction will always be an added cycle addressing mode in another variable cycle instruction
         cycles += (additional_cycle1 & additional_cycle2);//We must fix this. Using bit operations on this seems like overkill. Add_cycle_1 and add_cycle_2 either returns a 0 or 1. Make this explicit here.
     }
     cycles--;
