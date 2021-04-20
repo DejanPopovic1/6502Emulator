@@ -99,6 +99,18 @@ TEST_F(ProcessorTest, indexedAbsoluteAddressingX_IncrementsPC_AbsAddrEqualsDeref
     EXPECT_EQ(additionalCycles, 1);
 }
 
+TEST_F(ProcessorTest, indexedAbsoluteAddressingY_IncrementsPC_AbsAddrEqualsDereferencedPCPlusY_AddCycles_resultWrapsAroundByte) {
+    int additionalCycles = cpu.ABY(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(cpu.PC, 0x0202);
+    EXPECT_EQ(addr_abs, 0x0616);
+    EXPECT_EQ(additionalCycles, 0);
+    cpu.reset();
+    cpu.Y = 0xFE;
+    additionalCycles = cpu.ABY(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(cpu.PC, 0x0202);
+    EXPECT_EQ(addr_abs, 0x0703);
+    EXPECT_EQ(additionalCycles, 1);
+}
 
 
 

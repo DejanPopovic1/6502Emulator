@@ -229,7 +229,7 @@ u8 Processor::ABY(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     addr_abs = (highu8 << 8) | lowu8;
     addr_abs += this->Y;
     //Cross page boundary
-    if((addr_abs & 0xFF00) != (highu8 << 8)){
+    if(0xFF00 & lowu8 + Y){
         return 1;//"May" need an additional clock cycle
     }
     else {
