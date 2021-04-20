@@ -91,13 +91,15 @@ TEST_F(ProcessorTest, indexedAbsoluteAddressingX_IncrementsPC_AbsAddrEqualsDeref
     EXPECT_EQ(cpu.PC, 0x0202);
     EXPECT_EQ(addr_abs, 0x060C);
     EXPECT_EQ(additionalCycles, 0);
-
-//    mem[0x0200] = 0x80;
-//    cpu.reset();
-//    cpu.Y = 0xFF;
-//    cpu.ZPY(cpu.PC, addr_abs, addr_rel);
-//    EXPECT_EQ(addr_abs, 0x007F);
+    cpu.reset();
+    cpu.X = 0xFE;
+    additionalCycles = cpu.ABX(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(cpu.PC, 0x0202);
+    EXPECT_EQ(addr_abs, 0x0703);
+    EXPECT_EQ(additionalCycles, 1);
 }
+
+
 
 
 

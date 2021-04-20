@@ -281,7 +281,8 @@ u8 Processor::ABX(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     addr_abs = (highu8 << 8) | lowu8;
     addr_abs += this->X;
     //Cross page boundary
-    if((addr_abs & 0xFF00) != (highu8 << 8)){//Cross page boundary
+    if(0xFF00 & lowu8 + X){//Cross page boundary
+    //if((addr_abs & 0xFF00) != (highu8 << 8)){//Cross page boundary
         return 1;//"May" need an additional clock cycle
     }
     else {
