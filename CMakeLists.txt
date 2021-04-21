@@ -4,7 +4,7 @@ project(6502Emulator)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(SOURCES Processor.h Memory.h Memory.cpp Processor.cpp testingFile.cpp testingFile.h)#REMOVED MAIN
+set(SOURCES Processor.h Memory.h Memory.cpp Processor.cpp)#REMOVED MAIN
 
 add_subdirectory(google-test)#IF THIS IS MOVED TO THE END, THEN WE CANT RUN THE TEST ENTRY POINT
 

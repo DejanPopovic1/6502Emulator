@@ -26,6 +26,7 @@ struct Instruction;
 using u8 = uint8_t;
 using u16 = uint16_t;
 
+//Rename the first function pointer as "opcode"
 struct Instruction{
     uint8_t(Processor::*operate)(u16 addr_abs, u8 addr_rel) = nullptr;
     uint8_t(Processor::*addrmode)(u16 &PC, u16 &addr_abs, u8 &addr_rel) = nullptr;

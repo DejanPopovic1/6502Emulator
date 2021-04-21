@@ -308,6 +308,7 @@ u8 Processor::IND(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     return 0;
 }
 
+// Replace this if, and others with the ternary operator
 u8 Processor::IIY(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     u16 t = read(PC);
     PC++;
@@ -315,7 +316,7 @@ u8 Processor::IIY(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     u16 high = read((t + 1) & 0x00FF);
     addr_abs = (high << 8) | low;
     addr_abs += Y;
-    if(addr_abs & 0xFF00 != (high << 8)){
+    if(0xFF00 & low + Y){
         return 1;//"May" need an additional clock cycle
     }
     else{
