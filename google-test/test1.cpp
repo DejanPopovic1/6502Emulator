@@ -86,7 +86,7 @@ TEST_F(ProcessorTest, indexedZeroPageAddressingY_IncrementsPC_AbsAddrEqualsPCPlu
     EXPECT_EQ(addr_abs, 0x007F);
 }
 
-TEST_F(ProcessorTest, indexedAbsoluteAddressingX_IncrementsPC_AbsAddrEqualsDereferencedPCPlusX_AddCycles_resultWrapsAroundByte) {
+TEST_F(ProcessorTest, indexedAbsoluteAddressingX_IncrementsPC_AbsAddrEqualsDereferencedPCPlusX_AddCycleOnPageBoundary) {
     int additionalCycles = cpu.ABX(cpu.PC, addr_abs, addr_rel);
     EXPECT_EQ(cpu.PC, 0x0202);
     EXPECT_EQ(addr_abs, 0x060C);
@@ -99,7 +99,7 @@ TEST_F(ProcessorTest, indexedAbsoluteAddressingX_IncrementsPC_AbsAddrEqualsDeref
     EXPECT_EQ(additionalCycles, 1);
 }
 
-TEST_F(ProcessorTest, indexedAbsoluteAddressingY_IncrementsPC_AbsAddrEqualsDereferencedPCPlusY_AddCycles_resultWrapsAroundByte) {
+TEST_F(ProcessorTest, indexedAbsoluteAddressingY_IncrementsPC_AbsAddrEqualsDereferencedPCPlusY_AddCycleOnPageBoundary) {
     int additionalCycles = cpu.ABY(cpu.PC, addr_abs, addr_rel);
     EXPECT_EQ(cpu.PC, 0x0202);
     EXPECT_EQ(addr_abs, 0x0616);
@@ -112,11 +112,39 @@ TEST_F(ProcessorTest, indexedAbsoluteAddressingY_IncrementsPC_AbsAddrEqualsDeref
     EXPECT_EQ(additionalCycles, 1);
 }
 
+TEST_F(ProcessorTest, relAddressing_IncrementsPC_RelAddrEqualsDereferencedPC_NoAddCycles) {
+    int additionalCycles = cpu.REL(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(cpu.PC, 0x0201);
+    EXPECT_EQ(addr_rel, 0x05);
+    EXPECT_EQ(additionalCycles, 0);
+}
 
+TEST_F(ProcessorTest, indexedIndirectAddressingX_IncrementsPC_RelAddrEqualsDereferencedPC_NoAddCycles) {
+    int additionalCycles = cpu.IIX(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(cpu.PC, 0x0201);
+    EXPECT_EQ(addr_rel, 0x05);
+    EXPECT_EQ(additionalCycles, 0);
+}
 
+TEST_F(ProcessorTest, indexedIndirectAddressingY_IncrementsPC_RelAddrEqualsDereferencedPC_NoAddCycles) {
+    int additionalCycles = cpu.IIY(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(cpu.PC, 0x0201);
+    EXPECT_EQ(addr_rel, 0x05);
+    EXPECT_EQ(additionalCycles, 0);
+    cpu.reset();
+    cpu.Y = 0xFE;
+    additionalCycles = cpu.ABY(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(cpu.PC, 0x0202);
+    EXPECT_EQ(addr_abs, 0x0703);
+    EXPECT_EQ(additionalCycles, 1);
+}
 
-
-
+TEST_F(ProcessorTest, absoluteIndirectAddressing_IncrementsPC_RelAddrEqualsDereferencedPC_NoAddCycles) {
+    int additionalCycles = cpu.IND(cpu.PC, addr_abs, addr_rel);
+    EXPECT_EQ(cpu.PC, 0x0201);
+    EXPECT_EQ(addr_rel, 0x05);
+    EXPECT_EQ(additionalCycles, 0);
+}
 
 
 

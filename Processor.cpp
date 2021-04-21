@@ -264,12 +264,14 @@ u8 Processor::ZPX(u16 &PC, u16 &addr_abs, u8 &addr_rel){
 //If xxxxxxxx is negative, i.e. if 1xxxxxxx, then:
 //11111111*1*xxxxxxx
 //Else, 00000000*0*xxxxxxx
+
+//May need one or two more cycles. These cycles arent captured in the addressing mode but rather the opcode
 u8 Processor::REL(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     addr_rel = read(PC);
     PC++;
-    if(addr_rel & 0x80){
-        addr_rel |= 0xFF00;
-    }
+//    if(addr_rel & 0x80){
+//        addr_rel |= 0xFF00;
+//    }
     return 0;
 }
 
