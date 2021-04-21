@@ -5,7 +5,6 @@ project(Processor_Tests)
 
 add_subdirectory(lib/googletest)
 
-
 include_directories("${gtest_SOURCE_DIR}"/include "${gtest_SOURCE_DIR}")
 
 include_directories(../)
@@ -17,7 +16,7 @@ link_directories(../)
 # 'test1.cpp tests2.cpp' are source files with tests
 
 
-add_executable(Processor_Tests_run test1.cpp)
+add_executable(Processor_Tests_run addressingModeTests.cpp opCodeTests.cpp testRunner.cpp)
 
 
 #If you specify PRIVATE in one, you must specify in both target_link_libraries

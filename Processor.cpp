@@ -324,18 +324,20 @@ u8 Processor::IIY(u16 &PC, u16 &addr_abs, u8 &addr_rel){
     }
 }
 
-
+//=================================================
 //====================
 //INSTRUCTIONS
 //====================
+//=================================================
+
 
 u8 Processor::ADC(u16 addr_abs, u8 addr_rel){
     u8 fetched = fetch(addr_abs);
-    u16 temp = (u16)A + (u16)fetched + (u16)getFlag(C);
-    setOrClearFlag(C, temp > 255);
+    u16 temp = (u16)A + (u16)fetched + (u16)getFlag(C) * 0x0100;
+    setOrClearFlag(C, temp > 0x00FF);
     setOrClearFlag(Z, (temp & 0x00FF) == 0);
-    setOrClearFlag(N, temp & 0x80);
-    setOrClearFlag(V, (~((u16)A ^ (u16)fetched) & ((u16)A ^ (u16)temp)) & 0x0080);
+    setOrClearFlag(N, temp & BIT_SEVEN);
+    setOrClearFlag(V, (~((u16)A ^ (u16)fetched) & ((u16)A ^ (u16)temp)) & BIT_SEVEN);
     A = temp & 0x00FF;
     return 1;
 }

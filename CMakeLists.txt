@@ -1,6 +1,8 @@
-#message(STATUS "Begin root level CMake file")
+message(STATUS "Begin root level CMake file")
 cmake_minimum_required(VERSION 3.17)
 project(6502Emulator)
+
+add_compile_definitions(TEST_ALL_CODE=1)
 
 set(CMAKE_CXX_STANDARD 14)
 

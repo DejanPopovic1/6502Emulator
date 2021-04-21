@@ -1,3 +1,4 @@
+The assembler and debugger are seperate .exe's that run as different processes and can call one another!
 #if to compile a bugless or bug version of the 6502
 Complete unit tests
 Oganise unit tests in folder structure

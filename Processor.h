@@ -14,8 +14,10 @@
 #define BIT_SIX     (1 << 6)
 #define BIT_SEVEN   (1 << 7)
 
+
+//Perhaps have 2 .cpp files that split the core class and addressing modes and another into the opcodes
 //This works, but is technically undefined behaviour and a better option is to use friend classes
-#if IS_TESTING
+#if TEST_ALL_CODE
 #define private public
 #endif
 
