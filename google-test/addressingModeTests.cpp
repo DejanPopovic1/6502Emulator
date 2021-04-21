@@ -7,7 +7,7 @@
 #define RESET_HI_ADDR 0xFFFD
 
 //Given
-class ProcessorTest : public testing::Test
+class AddressingModeTest : public testing::Test
 {
 public:
     Memory mem;
@@ -34,7 +34,7 @@ public:
     }
 };
 
-TEST_F(ProcessorTest, impliedAddressing_DoesntChangePC_noAddCycles) {
+TEST_F(AddressingModeTest, impliedAddressing_DoesntChangePC_noAddCycles) {
     //When
     int additionalCycles = cpu.IMP(cpu.PC, addr_abs, addr_rel);
     //Then
@@ -43,7 +43,7 @@ TEST_F(ProcessorTest, impliedAddressing_DoesntChangePC_noAddCycles) {
     EXPECT_EQ(addr_abs, 0x0042);
 }
 
-TEST_F(ProcessorTest, immediateAddressing_IncrementPC_AbsAddrEqualsPC_noAddCycles) {
+TEST_F(AddressingModeTest, immediateAddressing_IncrementPC_AbsAddrEqualsPC_noAddCycles) {
     //When
     int additionalCycles = cpu.IMM(cpu.PC, addr_abs, addr_rel);
     //Then
@@ -52,7 +52,7 @@ TEST_F(ProcessorTest, immediateAddressing_IncrementPC_AbsAddrEqualsPC_noAddCycle
     EXPECT_EQ(additionalCycles, 0);
 }
 
-TEST_F(ProcessorTest, absoluteAddressing_IncrementPCTwice_AbsAddrEqualsDereferencedPC_noAddCycles) {
+TEST_F(AddressingModeTest, absoluteAddressing_IncrementPCTwice_AbsAddrEqualsDereferencedPC_noAddCycles) {
     //When
     int additionalCycles = cpu.ABS(cpu.PC, addr_abs, addr_rel);
     //Then
@@ -61,7 +61,7 @@ TEST_F(ProcessorTest, absoluteAddressing_IncrementPCTwice_AbsAddrEqualsDereferen
     EXPECT_EQ(additionalCycles, 0);
 }
 
-TEST_F(ProcessorTest, zeroPageAddressing_IncrementsPC_AbsAddrEqualsFirstByteOfDereferencedPC_noAddCycles) {
+TEST_F(AddressingModeTest, zeroPageAddressing_IncrementsPC_AbsAddrEqualsFirstByteOfDereferencedPC_noAddCycles) {
     //When
     int additionalCycles = cpu.ZPA(cpu.PC, addr_abs, addr_rel);
     //Then
@@ -70,7 +70,7 @@ TEST_F(ProcessorTest, zeroPageAddressing_IncrementsPC_AbsAddrEqualsFirstByteOfDe
     EXPECT_EQ(additionalCycles, 0);
 }
 
-TEST_F(ProcessorTest, indexedZeroPageAddressingX_IncrementsPC_AbsAddrEqualsPCPlusX_noAddCycles_resultWrapsAroundByte) {
+TEST_F(AddressingModeTest, indexedZeroPageAddressingX_IncrementsPC_AbsAddrEqualsPCPlusX_noAddCycles_resultWrapsAroundByte) {
     //When
     int additionalCycles = cpu.ZPX(cpu.PC, addr_abs, addr_rel);
     //Then
@@ -87,7 +87,7 @@ TEST_F(ProcessorTest, indexedZeroPageAddressingX_IncrementsPC_AbsAddrEqualsPCPlu
     EXPECT_EQ(addr_abs, 0x007F);
 }
 
-TEST_F(ProcessorTest, indexedZeroPageAddressingY_IncrementsPC_AbsAddrEqualsPCPlusY_noAddCycles_resultWrapsAroundByte) {
+TEST_F(AddressingModeTest, indexedZeroPageAddressingY_IncrementsPC_AbsAddrEqualsPCPlusY_noAddCycles_resultWrapsAroundByte) {
     //When
     int additionalCycles = cpu.ZPY(cpu.PC, addr_abs, addr_rel);
     //Then
@@ -104,7 +104,7 @@ TEST_F(ProcessorTest, indexedZeroPageAddressingY_IncrementsPC_AbsAddrEqualsPCPlu
     EXPECT_EQ(addr_abs, 0x007F);
 }
 
-TEST_F(ProcessorTest, indexedAbsoluteAddressingX_IncrementsPC_AbsAddrEqualsDereferencedPCPlusX_AddCycleOnPageBoundary) {
+TEST_F(AddressingModeTest, indexedAbsoluteAddressingX_IncrementsPC_AbsAddrEqualsDereferencedPCPlusX_AddCycleOnPageBoundary) {
     //When
     int additionalCycles = cpu.ABX(cpu.PC, addr_abs, addr_rel);
     //Then
@@ -122,7 +122,7 @@ TEST_F(ProcessorTest, indexedAbsoluteAddressingX_IncrementsPC_AbsAddrEqualsDeref
     EXPECT_EQ(additionalCycles, 1);
 }
 
-TEST_F(ProcessorTest, indexedAbsoluteAddressingY_IncrementsPC_AbsAddrEqualsDereferencedPCPlusY_AddCycleOnPageBoundary) {
+TEST_F(AddressingModeTest, indexedAbsoluteAddressingY_IncrementsPC_AbsAddrEqualsDereferencedPCPlusY_AddCycleOnPageBoundary) {
     //When
     int additionalCycles = cpu.ABY(cpu.PC, addr_abs, addr_rel);
     //Then
@@ -140,7 +140,7 @@ TEST_F(ProcessorTest, indexedAbsoluteAddressingY_IncrementsPC_AbsAddrEqualsDeref
     EXPECT_EQ(additionalCycles, 1);
 }
 
-TEST_F(ProcessorTest, relAddressing_IncrementsPC_RelAddrEqualsDereferencedPC_NoAddCycles) {
+TEST_F(AddressingModeTest, relAddressing_IncrementsPC_RelAddrEqualsDereferencedPC_NoAddCycles) {
     //When
     int additionalCycles = cpu.REL(cpu.PC, addr_abs, addr_rel);
     //Then
@@ -149,7 +149,7 @@ TEST_F(ProcessorTest, relAddressing_IncrementsPC_RelAddrEqualsDereferencedPC_NoA
     EXPECT_EQ(additionalCycles, 0);
 }
 
-TEST_F(ProcessorTest, indexedIndirectAddressingX_IncrementsPC_AbsAddrEqualsDereferencedPCPlusXDereferenced_NoAddCycles) {
+TEST_F(AddressingModeTest, indexedIndirectAddressingX_IncrementsPC_AbsAddrEqualsDereferencedPCPlusXDereferenced_NoAddCycles) {
     //When
     int additionalCycles = cpu.IIX(cpu.PC, addr_abs, addr_rel);
     //Then
@@ -158,7 +158,7 @@ TEST_F(ProcessorTest, indexedIndirectAddressingX_IncrementsPC_AbsAddrEqualsDeref
     EXPECT_EQ(additionalCycles, 0);
 }
 
-TEST_F(ProcessorTest, indirectIndexedAddressingY_IncrementsPC_AbsAddrEqualsDereferencedDereferencedPCPlusY_AddCycleOnPageBoundary) {
+TEST_F(AddressingModeTest, indirectIndexedAddressingY_IncrementsPC_AbsAddrEqualsDereferencedDereferencedPCPlusY_AddCycleOnPageBoundary) {
     //When
     int additionalCycles = cpu.IIY(cpu.PC, addr_abs, addr_rel);
     //Then
@@ -176,7 +176,7 @@ TEST_F(ProcessorTest, indirectIndexedAddressingY_IncrementsPC_AbsAddrEqualsDeref
     EXPECT_EQ(additionalCycles, 1);
 }
 
-TEST_F(ProcessorTest, absoluteIndirectAddressing_IncrementsPCTwice_RelAddrEqualsDereferencedPC_NoAddCycles) {
+TEST_F(AddressingModeTest, absoluteIndirectAddressing_IncrementsPCTwice_RelAddrEqualsDereferencedPC_NoAddCycles) {
     //When
     int additionalCycles = cpu.IND(cpu.PC, addr_abs, addr_rel);
     //Then

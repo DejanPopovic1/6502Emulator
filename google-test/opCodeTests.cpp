@@ -7,7 +7,7 @@
 #define RESET_HI_ADDR 0xFFFD
 
 //Given
-class ProcessorTest : public testing::Test
+class OpCodeTest : public testing::Test
 {
 public:
     Memory mem;
@@ -29,12 +29,36 @@ public:
     }
 };
 
-TEST_F(ProcessorTest, addWithCarry_performAdditionalOrSubtractionOnAccumulatorWithAbsAddr_assignCZNVflags_additionalCycle) {
+TEST_F(OpCodeTest, addWithCarry_performAdditionalOrSubtractionOnAccumulatorWithAbsAddr_assignCZNVflags_additionalCycle) {
     //When
     int additionalCycles = cpu.ADC(addr_abs, addr_rel);
     //Then
     EXPECT_EQ(cpu.A, 0x66);
+    EXPECT_EQ(cpu.getFlag(Processor::C), 0);
+    EXPECT_EQ(cpu.getFlag(Processor::Z), 0);
+    EXPECT_EQ(cpu.getFlag(Processor::N), 0);
+    EXPECT_EQ(cpu.getFlag(Processor::V), 0);
     EXPECT_EQ(additionalCycles, 1);
+    //Given
+    cpu.A = 0xFD;
+    //When
+    additionalCycles = cpu.ADC(addr_abs, addr_rel);
+    //Then
+    EXPECT_EQ(cpu.A, 0x02);
+    EXPECT_EQ(cpu.getFlag(Processor::C), 1);
+    EXPECT_EQ(cpu.getFlag(Processor::Z), 0);
+    EXPECT_EQ(cpu.getFlag(Processor::N), 0);
+    EXPECT_EQ(cpu.getFlag(Processor::V), 0);
+    //Given
+    cpu.A = 0xFB;
+    //When
+    additionalCycles = cpu.ADC(addr_abs, addr_rel);
+    //Then
+    EXPECT_EQ(cpu.A, 0x00);
+    EXPECT_EQ(cpu.getFlag(Processor::C), 1);
+    EXPECT_EQ(cpu.getFlag(Processor::Z), 1);
+    EXPECT_EQ(cpu.getFlag(Processor::N), 0);
+    EXPECT_EQ(cpu.getFlag(Processor::V), 0);
 }
 
 //u8 Processor::ADC(u16 addr_abs, u8 addr_rel){
